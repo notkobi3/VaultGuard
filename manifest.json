@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "VaultGuard",
+  "description": "Educational phishing-risk detector for financial and cryptocurrency domains.",
+  "version": "0.1.0",
+  "action": {
+    "default_title": "VaultGuard",
+    "default_popup": "src/popup/popup.html"
+  },
+  "permissions": [
+    "activeTab"
+  ]
+}

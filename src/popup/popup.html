@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>VaultGuard</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="popup-shell">
+      <header class="popup-header">
+        <h1>VaultGuard</h1>
+        <p class="status">Protection: <strong>Active</strong></p>
+      </header>
+
+      <section class="analysis-panel" aria-live="polite">
+        <div class="field">
+          <span class="label">Current Website:</span>
+          <strong id="hostname">Checking current tab...</strong>
+        </div>
+
+        <div class="field">
+          <span class="label">Risk Level:</span>
+          <strong id="risk-level" class="risk safe">Safe</strong>
+        </div>
+
+        <p id="summary" class="summary">VaultGuard is preparing the local domain analysis.</p>
+        <ul id="reasons" class="reasons"></ul>
+      </section>
+    </main>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
