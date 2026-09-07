@@ -35,5 +35,35 @@ testRiskyDomain("coinbase-login-secure.com", 50, "Domain resembles Coinbase");
 testRiskyDomain("paypa1.com", 35, "Character substitution may be imitating PayPal");
 testRiskyDomain("chase-account-verification.com", 50, "Domain resembles Chase");
 testRiskyDomain("metamask-wallet-support.net", 50, "Domain resembles MetaMask");
+testRiskyDomain("paypal.com.example.net", 45, "Places approved domain \"paypal.com\" inside a different hostname");
+testRiskyDomain("xn--coinbase-9ib.com", 40, "Contains punycode label");
+
+const customBrandResult = analyzeDomain("mybroker-login.com", {
+  protectedBrands: [
+    {
+      name: "MyBroker",
+      aliases: ["mybroker"],
+      domains: ["mybroker.com"]
+    }
+  ]
+});
+
+assert.equal(customBrandResult.level, "High Risk", "custom protected brands should be analyzed");
+assert.ok(
+  customBrandResult.reasons.some((reason) => reason.includes("Domain resembles MyBroker")),
+  "custom protected brand result should explain the resemblance"
+);
+assert.equal(
+  Object.hasOwn(customBrandResult, "reasonKeys"),
+  false,
+  "internal duplicate-reason tracking should not be returned"
+);
+
+const duplicateReasonResult = analyzeDomain("paypal.com.example.net");
+assert.equal(
+  duplicateReasonResult.reasons.filter((reason) => reason.includes("Places approved domain")).length,
+  1,
+  "duplicate reasons should be collapsed"
+);
 
 console.log("All VaultGuard domain analyzer tests passed.");

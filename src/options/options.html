@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>VaultGuard Options</title>
+    <link rel="stylesheet" href="options.css">
+  </head>
+  <body>
+    <main class="options-shell">
+      <header>
+        <p class="eyebrow">VaultGuard settings</p>
+        <h1>Protected Brands</h1>
+        <p>Manage the brands and legitimate domains VaultGuard checks locally.</p>
+      </header>
+
+      <section class="notice">
+        Do not enter passwords, seed phrases, private keys, recovery codes, bank details, or API keys here.
+      </section>
+
+      <section class="editor-grid">
+        <form id="brandForm" class="editor" autocomplete="off">
+          <h2>Add Brand</h2>
+          <label>
+            Brand name
+            <input id="brandName" type="text" placeholder="Example: Coinbase">
+          </label>
+          <label>
+            Aliases
+            <input id="brandAliases" type="text" placeholder="Example: coinbase, cb">
+          </label>
+          <label>
+            Legitimate domains
+            <input id="brandDomains" type="text" placeholder="Example: coinbase.com, coinbase.com/oauth">
+          </label>
+          <button type="submit">Add Protected Brand</button>
+        </form>
+
+        <section class="editor">
+          <div class="section-header">
+            <h2>Current List</h2>
+            <div class="actions">
+              <button id="exportBrands" class="quiet" type="button">Export</button>
+              <button id="importBrands" class="quiet" type="button">Import</button>
+              <button id="resetBrands" class="quiet" type="button">Restore Defaults</button>
+            </div>
+          </div>
+          <input id="importFile" class="hidden-file" type="file" accept="application/json,.json">
+          <div id="brandCards" class="brand-cards" aria-live="polite"></div>
+          <p id="status" class="status" role="status"></p>
+        </section>
+      </section>
+    </main>
+
+    <template id="brandTemplate">
+      <article class="brand-card">
+        <div>
+          <h3></h3>
+          <p class="aliases"></p>
+          <p class="domains"></p>
+        </div>
+        <button class="remove quiet" type="button">Remove</button>
+      </article>
+    </template>
+
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

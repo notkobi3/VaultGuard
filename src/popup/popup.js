@@ -1,9 +1,11 @@
 import { analyzeDomain } from "../utils/domainAnalyzer.js";
 
+const STORAGE_KEY = "vaultguardProtectedBrands";
 const hostnameElement = document.querySelector("#hostname");
 const riskLevelElement = document.querySelector("#risk-level");
 const summaryElement = document.querySelector("#summary");
 const reasonsElement = document.querySelector("#reasons");
+const openOptionsButton = document.querySelector("#open-options");
 
 function setRiskClass(level) {
   riskLevelElement.className = "risk";
@@ -44,6 +46,19 @@ function renderError(message) {
   reasonsElement.textContent = "";
 }
 
+async function getProtectedBrands() {
+  const saved = await chrome.storage.local.get(STORAGE_KEY);
+  return saved[STORAGE_KEY];
+}
+
+async function updateBadge(analysis) {
+  const badgeText = analysis.level === "Safe" ? "OK" : analysis.level === "Suspicious" ? "!" : "!!";
+  const badgeColor = analysis.level === "Safe" ? "#198754" : analysis.level === "Suspicious" ? "#ffc107" : "#dc3545";
+
+  await chrome.action.setBadgeText({ text: badgeText });
+  await chrome.action.setBadgeBackgroundColor({ color: badgeColor });
+}
+
 async function getActiveTabHostname() {
   const tabs = await chrome.tabs.query({
     active: true,
@@ -63,9 +78,15 @@ async function getActiveTabHostname() {
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     const hostname = await getActiveTabHostname();
-    const analysis = analyzeDomain(hostname);
+    const protectedBrands = await getProtectedBrands();
+    const analysis = analyzeDomain(hostname, { protectedBrands });
     renderAnalysis(analysis);
+    await updateBadge(analysis);
   } catch (error) {
     renderError("VaultGuard could not read this tab URL. Chrome internal pages may not be available to extensions.");
   }
+});
+
+openOptionsButton.addEventListener("click", () => {
+  chrome.runtime.openOptionsPage();
 });

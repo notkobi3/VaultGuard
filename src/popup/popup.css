@@ -100,3 +100,25 @@ h1 {
 .reasons li {
   margin-bottom: 6px;
 }
+
+.popup-footer {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #d9e0ec;
+  margin-top: 14px;
+  padding-top: 12px;
+}
+
+.settings-button {
+  border: 0;
+  border-radius: 4px;
+  padding: 8px 10px;
+  color: #172033;
+  background: #e7edf5;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.settings-button:hover {
+  background: #d9e3ef;
+}

@@ -87,6 +87,18 @@ function compactDomainText(value) {
   return value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
 }
 
+function normalizeProtectedBrands(protectedBrands = PROTECTED_BRANDS) {
+  return protectedBrands.map((brand) => ({
+    name: brand.name,
+    aliases: Array.isArray(brand.aliases) && brand.aliases.length > 0
+      ? brand.aliases.map(compactDomainText)
+      : [compactDomainText(brand.name)],
+    domains: Array.isArray(brand.domains)
+      ? brand.domains.map(normalizeHostname).filter(Boolean)
+      : []
+  }));
+}
+
 function hasAllowedDomain(hostname, allowedDomain) {
   return hostname === allowedDomain || hostname.endsWith(`.${allowedDomain}`);
 }
@@ -126,6 +138,18 @@ function createSubstitutionVariants(value) {
 
 function containsSubstitution(value) {
   return SUBSTITUTIONS.some(({ character }) => value.includes(character));
+}
+
+function containsPunycodeLabel(hostname) {
+  return hostname.split(".").some((part) => part.startsWith("xn--"));
+}
+
+function containsNonAscii(value) {
+  return /[^\x00-\x7F]/.test(value);
+}
+
+function containsDeceptiveProtectedDomain(hostname, allowedDomain) {
+  return hostname.includes(`${allowedDomain}.`) && !hasAllowedDomain(hostname, allowedDomain);
 }
 
 function hasOneEditDistance(value, target) {
@@ -175,11 +199,29 @@ function getRiskLevel(score) {
 }
 
 function addReason(result, points, reason) {
+  if (result.reasonKeys.has(reason)) {
+    return;
+  }
+
+  result.reasonKeys.add(reason);
   result.score += points;
   result.reasons.push(`+${points}: ${reason}`);
 }
 
-export function analyzeDomain(hostname) {
+function finalizeResult(result) {
+  result.score = Math.min(result.score, 100);
+  result.level = getRiskLevel(result.score);
+
+  if (result.reasons.length === 0) {
+    result.reasons.push("No protected-brand imitation signals were found");
+  }
+
+  delete result.reasonKeys;
+  return result;
+}
+
+export function analyzeDomain(hostname, options = {}) {
+  const protectedBrands = normalizeProtectedBrands(options.protectedBrands);
   const normalizedHostname = normalizeHostname(hostname);
   const registrableDomain = getRegistrableDomain(normalizedHostname);
   const domainLabel = getDomainLabel(normalizedHostname);
@@ -189,16 +231,24 @@ export function analyzeDomain(hostname) {
     hostname: normalizedHostname,
     score: 0,
     level: "Safe",
-    reasons: []
+    reasons: [],
+    reasonKeys: new Set()
   };
 
   if (!normalizedHostname) {
     addReason(result, 20, "No hostname was available to analyze");
-    result.level = getRiskLevel(result.score);
-    return result;
+    return finalizeResult(result);
   }
 
-  const matchedLegitimateBrand = PROTECTED_BRANDS.find((brand) =>
+  if (containsPunycodeLabel(normalizedHostname)) {
+    addReason(result, 40, "Contains punycode label, which can hide look-alike international characters");
+  }
+
+  if (containsNonAscii(normalizedHostname)) {
+    addReason(result, 30, "Contains non-ASCII characters that may be visually deceptive");
+  }
+
+  const matchedLegitimateBrand = protectedBrands.find((brand) =>
     brand.domains.some((domain) => hasAllowedDomain(normalizedHostname, domain))
   );
 
@@ -213,11 +263,16 @@ export function analyzeDomain(hostname) {
       result.reasons.push(`Recognized legitimate ${matchedLegitimateBrand.name} domain`);
     }
 
-    result.level = getRiskLevel(result.score);
-    return result;
+    return finalizeResult(result);
   }
 
-  PROTECTED_BRANDS.forEach((brand) => {
+  protectedBrands.forEach((brand) => {
+    brand.domains.forEach((domain) => {
+      if (containsDeceptiveProtectedDomain(normalizedHostname, domain)) {
+        addReason(result, 45, `Places approved domain "${domain}" inside a different hostname`);
+      }
+    });
+
     brand.aliases.forEach((alias) => {
       if (compactLabel === alias || compactHostname.includes(alias)) {
         addReason(result, 40, `Domain resembles ${brand.name} but is not an approved domain`);
@@ -255,14 +310,7 @@ export function analyzeDomain(hostname) {
     addReason(result, 10, "Uses multiple subdomain levels, which can hide the real domain");
   }
 
-  result.score = Math.min(result.score, 100);
-  result.level = getRiskLevel(result.score);
-
-  if (result.reasons.length === 0) {
-    result.reasons.push("No protected-brand imitation signals were found");
-  }
-
-  return result;
+  return finalizeResult(result);
 }
 
 export { PROTECTED_BRANDS, SUSPICIOUS_KEYWORDS };

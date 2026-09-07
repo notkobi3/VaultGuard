@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="VaultGuard icon">
+  <rect width="128" height="128" rx="26" fill="#102a36"/>
+  <path d="M64 16 104 31v27c0 25-16.4 42.8-40 52.4C40.4 100.8 24 83 24 58V31l40-15Z" fill="#34c3a0"/>
+  <path d="M49 62 59 72l21-24" fill="none" stroke="#102a36" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
