@@ -60,11 +60,15 @@
           <p>Load a starter policy for common teams, then adjust domains for the customer.</p>
         </div>
         <div class="actions">
-          <button class="quiet preset" type="button" data-preset="crypto">Crypto Team</button>
-          <button class="quiet preset" type="button" data-preset="finance">Finance Team</button>
-          <button class="quiet preset" type="button" data-preset="cloud">Cloud Dev Team</button>
-          <button id="exportPolicy" class="quiet" type="button">Export Policy</button>
-          <button id="importPolicy" class="quiet" type="button">Import Policy</button>
+          <div class="preset-actions" aria-label="Company presets">
+            <button class="quiet preset" type="button" data-preset="crypto">Crypto Team</button>
+            <button class="quiet preset" type="button" data-preset="finance">Finance Team</button>
+            <button class="quiet preset" type="button" data-preset="cloud">Cloud Dev Team</button>
+          </div>
+          <div class="policy-actions" aria-label="Policy tools">
+            <button id="exportPolicy" class="policy-button" type="button">Export Policy</button>
+            <button id="importPolicy" class="policy-button" type="button">Import Policy</button>
+          </div>
           <button id="openOnboarding" class="quiet" type="button">Open Onboarding</button>
         </div>
       </section>

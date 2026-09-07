@@ -88,6 +88,7 @@ vaultguard/
     icon-128.svg
   docs/
     architecture.md
+    timeline.md
     legal/
       README.md
       privacy-policy.md
@@ -293,7 +294,7 @@ The tests verify that known legitimate domains have a Safe risk score and phishi
 - Enable the warning banner and confirm High Risk hostnames show a top-of-page warning.
 - Open `chrome://extensions` and confirm VaultGuard handles Chrome internal pages gracefully.
 
-## Recommended v1.1 Tasks
+## Recommended v1.3 Tasks
 
 1. Add real Chrome Web Store screenshots after loading the extension in Chrome.
 2. Add managed-policy support for company-wide protected brands and trusted domains.

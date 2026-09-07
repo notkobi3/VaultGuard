@@ -1,8 +1,8 @@
 :root {
   color-scheme: light;
   font-family: Arial, Helvetica, sans-serif;
-  color: #172033;
-  background: #f5f7fb;
+  color: #102033;
+  background: #eef4f2;
 }
 
 * {
@@ -13,7 +13,7 @@ body {
   width: 340px;
   min-height: 340px;
   margin: 0;
-  background: #f5f7fb;
+  background: linear-gradient(180deg, #eef4f2 0%, #f8faf7 100%);
 }
 
 .popup-shell {
@@ -187,12 +187,61 @@ h1 {
   border: 0;
   border-radius: 4px;
   padding: 8px 10px;
-  color: #172033;
-  background: #e7edf5;
+  color: #ffffff;
+  background: #1f6670;
   font-weight: 700;
   cursor: pointer;
 }
 
 .settings-button:hover {
-  background: #d9e3ef;
+  background: #174f58;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    color: #e8f0f2;
+    background: #0f171d;
+  }
+
+  body {
+    background: linear-gradient(180deg, #0f171d 0%, #15232a 100%);
+  }
+
+  .popup-header,
+  .history-panel,
+  .popup-footer {
+    border-color: #2c4652;
+  }
+
+  .status,
+  .label,
+  .status.muted {
+    color: #aebdc6;
+  }
+
+  .risk.safe {
+    color: #bff4dc;
+    background: #123829;
+  }
+
+  .risk.suspicious {
+    color: #ffe7a6;
+    background: #3b2e10;
+  }
+
+  .risk.high-risk {
+    color: #ffc8c3;
+    background: #421b20;
+  }
+
+  .history-list li {
+    border-color: #2c4652;
+    background: #172832;
+  }
+
+  .history-score {
+    color: #e8f0f2;
+    background: #263b46;
+  }
 }

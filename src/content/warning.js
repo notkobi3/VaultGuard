@@ -25,7 +25,7 @@
     title.textContent = "VaultGuard warning: high-risk domain";
     details.textContent = `${analysis.hostname} has a risk score of ${analysis.score}/100. ${analysis.reasons.join(" ")}`;
     optionsButton.type = "button";
-    optionsButton.textContent = "Options";
+    optionsButton.textContent = "Settings";
     dismissButton.type = "button";
     dismissButton.textContent = "Dismiss";
 

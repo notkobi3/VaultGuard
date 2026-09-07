@@ -1,8 +1,8 @@
 :root {
   color-scheme: light;
   font-family: Arial, Helvetica, sans-serif;
-  color: #172033;
-  background: #f5f7fb;
+  color: #102033;
+  background: #eef4f2;
 }
 
 * {
@@ -11,9 +11,7 @@
 
 body {
   margin: 0;
-  background:
-    radial-gradient(circle at 14% 12%, rgba(31, 102, 112, 0.14), transparent 28%),
-    #f5f7fb;
+  background: linear-gradient(180deg, #eef4f2 0%, #f8faf7 45%, #eef3f7 100%);
 }
 
 button {
@@ -114,5 +112,37 @@ button.quiet {
 
   .steps {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    color: #e8f0f2;
+    background: #0f171d;
+  }
+
+  body {
+    background: linear-gradient(180deg, #0f171d 0%, #15232a 48%, #101922 100%);
+  }
+
+  .eyebrow {
+    color: #79c9ca;
+  }
+
+  header p,
+  article p {
+    color: #aebdc6;
+  }
+
+  article {
+    border-color: #2c4652;
+    background: rgba(20, 33, 41, 0.96);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+  }
+
+  button.quiet {
+    color: #e8f0f2;
+    background: #263b46;
   }
 }

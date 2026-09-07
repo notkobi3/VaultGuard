@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0 - UI Clarity Pass
+
+- Made `Export Policy` and `Import Policy` visually distinct from company preset buttons.
+- Changed the popup `Options` button to `Settings`.
+- Refreshed extension page backgrounds with a softer high-contrast color treatment.
+- Added dark-mode color support for Chrome users using dark appearance settings.
+- Added `docs/timeline.md` to track the v1.1-v1.2 UI improvement window.
+
 ## 1.0.0 - Release Candidate
 
 - Added first-run onboarding page.
