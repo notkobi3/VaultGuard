@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0 - Trusted Domain and Scoring Refinement
+
+- Added `Trusted` as a distinct risk level for user-approved domains.
+- Renamed the middle risk level from `Suspicious` to `Needs Review`.
+- Adjusted keyword scoring so secure/login/account words alone do not raise risk for normal university or verified business domains.
+- Kept keyword risk increases when another phishing signal is already present.
+- Added tests for normal university and business domains.
+
 ## 1.2.0 - UI Clarity Pass
 
 - Made `Export Policy` and `Import Policy` visually distinct from company preset buttons.

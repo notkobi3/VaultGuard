@@ -248,7 +248,7 @@ function downloadBrands() {
 
 function downloadPolicy() {
   downloadJson("vaultguard-policy.json", {
-    version: "1.0.0",
+    version: "1.3.0",
     exportedAt: new Date().toISOString(),
     settings,
     protectedBrands: brands,

@@ -23,6 +23,8 @@ Current features:
 - History filters and JSON/CSV export.
 - Company policy presets.
 - Policy import/export.
+- Trusted level for manually approved domains.
+- Contextual scoring that avoids penalizing normal university or business domains for login-related words alone.
 
 VaultGuard does not ask for passwords, seed phrases, private keys, recovery codes, bank details, API keys, or payment card numbers.
 

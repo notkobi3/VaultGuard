@@ -37,9 +37,9 @@ testRiskyDomain("chase-account-verification.com", 50, "Domain resembles Chase");
 testRiskyDomain("metamask-wallet-support.net", 50, "Domain resembles MetaMask");
 testRiskyDomain("paypal.com.example.net", 45, "Places approved domain \"paypal.com\" inside a different hostname");
 testRiskyDomain("xn--coinbase-9ib.com", 40, "Contains punycode label");
-testRiskyDomain("paypaI-password-reset.com", 30, "Contains suspicious keyword \"password\"");
 testRiskyDomain("paypa1--secure.com", 45, "Uses repeated hyphens");
 testRiskyDomain("secure.login.coinbase.co.uk.example.net", 55, "Uses multiple subdomain levels");
+testRiskyDomain("coinbase-password-reset.com", 55, "Contains suspicious keyword \"password\"");
 
 const customBrandResult = analyzeDomain("mybroker-login.com", {
   protectedBrands: [
@@ -72,8 +72,23 @@ assert.equal(
 const trustedDomainResult = analyzeDomain("login.paypa1.com", {
   trustedDomains: ["paypa1.com"]
 });
-assert.equal(trustedDomainResult.level, "Safe", "trusted domains should bypass warnings");
+assert.equal(trustedDomainResult.level, "Trusted", "trusted domains should bypass warnings with a Trusted level");
 assert.equal(trustedDomainResult.trusted, true, "trusted domain result should be marked trusted");
+
+const normalUniversityResult = analyzeDomain("secure.login.harvard.edu");
+assert.equal(
+  normalUniversityResult.level,
+  "Safe",
+  "secure/login words alone should not raise risk for normal university domains"
+);
+assert.equal(normalUniversityResult.score, 0, "normal university domain should not gain keyword-only risk points");
+
+const normalBusinessResult = analyzeDomain("account.billing.stripe.com");
+assert.equal(
+  normalBusinessResult.level,
+  "Safe",
+  "account/billing words alone should not raise risk for normal business domains"
+);
 
 const coUkResult = analyzeDomain("secure.paypal.co.uk.example.net", {
   protectedBrands: [

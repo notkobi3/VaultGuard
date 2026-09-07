@@ -2,11 +2,11 @@
 
 VaultGuard is an educational Chrome extension that helps identify phishing-style domain names for banking, cryptocurrency, wallet, and financial-service websites.
 
-VaultGuard v1.0 analyzes website hostnames locally and explains why a domain looks safe, suspicious, or high risk.
+VaultGuard v1.3 analyzes website hostnames locally and explains why a domain looks trusted, safe, needs review, or high risk.
 
 ## Educational Prototype Warning
 
-VaultGuard v1.0 is a release-candidate learning project and should not be treated as a complete financial-security product. It can identify many obvious domain imitation patterns, but it cannot prove that a website is safe.
+VaultGuard v1.3 is a release-candidate learning project and should not be treated as a complete financial-security product. It can identify many obvious domain imitation patterns, but it cannot prove that a website is safe.
 
 ## Current Features
 
@@ -21,7 +21,7 @@ VaultGuard v1.0 is a release-candidate learning project and should not be treate
 - Optional high-risk warning banner for pages that look like brand-imitation phishing attempts.
 - Trusted-domain list for known-safe false positives.
 - Hostname-only recent check history with local clear controls.
-- Dedicated history page with Safe, Suspicious, High Risk, and Trusted filters.
+- Dedicated history page with Trusted, Safe, Needs Review, and High Risk filters.
 - JSON and CSV history export.
 - Configurable history retention for the last 25, 100, or 500 checks.
 - Temporary hostname warning dismissals.
@@ -31,16 +31,19 @@ VaultGuard v1.0 is a release-candidate learning project and should not be treate
 - Chrome Web Store listing draft, release checklist, and enterprise install notes.
 - Duplicate reason handling to avoid repeated identical warnings.
 - Extension badge status after popup analysis:
+  - `TR`: Trusted
   - `OK`: Safe
-  - `!`: Suspicious
+  - `!`: Needs Review
   - `!!`: High Risk
 - Punycode and internationalized-domain-name warning signals.
 - Deceptive protected-domain checks such as `paypal.com.example.net`.
 - Expanded suspicious keyword and character-substitution detection.
+- Contextual keyword scoring so normal secure-login subdomains are not penalized by those words alone.
 - Basic multi-part suffix handling for common domains such as `.co.uk`.
 - Explainable risk scoring:
+  - Trusted: User-approved trusted domain
   - 0-20: Safe
-  - 21-50: Suspicious
+  - 21-50: Needs Review
   - 51-100: High Risk
 - Node.js tests for legitimate, suspicious, custom-brand, punycode, and deceptive-subdomain examples.
 
@@ -151,7 +154,7 @@ High-risk pages can receive an on-page warning banner
 
 ## Security Philosophy
 
-VaultGuard v1.0 follows a privacy-first design:
+VaultGuard v1.3 follows a privacy-first design:
 
 - Analysis happens locally in the browser.
 - Manual checks read the current tab URL when the user opens the popup.
@@ -164,7 +167,7 @@ VaultGuard v1.0 follows a privacy-first design:
 
 ## What VaultGuard Never Collects
 
-VaultGuard v1.0 does not collect:
+VaultGuard v1.3 does not collect:
 
 - Passwords
 - Banking credentials
@@ -275,7 +278,7 @@ From inside the `vaultguard` folder:
 npm test
 ```
 
-The tests verify that known legitimate domains have a Safe risk score and phishing-like examples produce suspicious or high-risk scores. They also check custom brands, trusted domains, multi-part suffix handling, duplicate reason handling, and internal-result cleanup.
+The tests verify that known legitimate domains have a Safe risk score, trusted domains show as Trusted, and phishing-like examples produce Needs Review or High Risk scores. They also check custom brands, normal university/business domains, multi-part suffix handling, duplicate reason handling, and internal-result cleanup.
 
 ## Manual Test Ideas
 

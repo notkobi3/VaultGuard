@@ -17,7 +17,7 @@ VaultGuard checks hostnames for signals such as:
 - Known protected-brand names on unapproved domains.
 - Character substitutions such as `0` for `o` or `1` for `l`.
 - Domains that are one character away from protected brands.
-- Suspicious words like `login`, `secure`, `verify`, `support`, `account`, and `wallet`.
+- Sensitive words like `login`, `secure`, `verify`, `support`, `account`, and `wallet` when another phishing signal is already present.
 - Punycode labels that may hide look-alike international characters.
 - Protected domains placed inside unrelated hostnames, such as `paypal.com.example.net`.
 - Multiple subdomain levels that can hide the real domain.
@@ -43,8 +43,9 @@ Auto-scan is optional and off by default.
 When enabled, VaultGuard listens for tab changes and analyzes `http` and `https` hostnames locally. It updates the toolbar badge with:
 
 - `OK`: Safe
-- `!`: Suspicious
+- `!`: Needs Review
 - `!!`: High Risk
+- `TR`: Trusted
 
 ## Warning Banner
 

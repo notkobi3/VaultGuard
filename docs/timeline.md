@@ -1,5 +1,14 @@
 # VaultGuard Timeline
 
+## v1.3.0 - Trusted Domain and Scoring Refinement
+
+Focus: reduce false positives for legitimate organizations while keeping strong warnings for look-alike domains.
+
+- Add `Trusted` as a distinct risk level for manually verified domains.
+- Rename the middle risk level from `Suspicious` to `Needs Review`.
+- Avoid raising risk for normal university or business domains solely because they use words like `secure`, `login`, `account`, or `billing`.
+- Continue applying keyword risk when another phishing signal is already present.
+
 ## v1.2.0 - UI Clarity Pass
 
 Focus: make the v1.0 release candidate easier to read, easier to explain, and cleaner for potential customers.

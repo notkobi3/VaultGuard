@@ -33,8 +33,13 @@ function setRiskClass(level) {
     return;
   }
 
-  if (level === "Suspicious") {
-    riskLevelElement.classList.add("suspicious");
+  if (level === "Needs Review") {
+    riskLevelElement.classList.add("needs-review");
+    return;
+  }
+
+  if (level === "Trusted") {
+    riskLevelElement.classList.add("trusted");
     return;
   }
 
@@ -83,8 +88,8 @@ function renderAnalysis(analysis) {
 
 function renderError(message) {
   hostnameElement.textContent = "Unavailable";
-  riskLevelElement.textContent = "Suspicious";
-  setRiskClass("Suspicious");
+  riskLevelElement.textContent = "Needs Review";
+  setRiskClass("Needs Review");
   summaryElement.textContent = message;
   reasonsElement.textContent = "";
 }
@@ -104,8 +109,8 @@ async function getProtectedBrands() {
 }
 
 async function updateBadge(analysis) {
-  const badgeText = analysis.level === "Safe" ? "OK" : analysis.level === "Suspicious" ? "!" : "!!";
-  const badgeColor = analysis.level === "Safe" ? "#198754" : analysis.level === "Suspicious" ? "#ffc107" : "#dc3545";
+  const badgeText = analysis.level === "Trusted" ? "TR" : analysis.level === "Safe" ? "OK" : analysis.level === "Needs Review" ? "!" : "!!";
+  const badgeColor = analysis.level === "Trusted" ? "#0d9488" : analysis.level === "Safe" ? "#198754" : analysis.level === "Needs Review" ? "#ffc107" : "#dc3545";
 
   await chrome.action.setBadgeText({ text: badgeText });
   await chrome.action.setBadgeBackgroundColor({ color: badgeColor });

@@ -22,8 +22,12 @@ function getBadgeForLevel(level) {
     return { text: "!!", color: "#dc3545" };
   }
 
-  if (level === "Suspicious") {
+  if (level === "Needs Review") {
     return { text: "!", color: "#ffc107" };
+  }
+
+  if (level === "Trusted") {
+    return { text: "TR", color: "#0d9488" };
   }
 
   return { text: "OK", color: "#198754" };

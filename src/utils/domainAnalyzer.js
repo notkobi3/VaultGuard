@@ -252,7 +252,7 @@ function getRiskLevel(score) {
   }
 
   if (score >= 21) {
-    return "Suspicious";
+    return "Needs Review";
   }
 
   return "Safe";
@@ -270,7 +270,7 @@ function addReason(result, points, reason) {
 
 function finalizeResult(result) {
   result.score = Math.min(result.score, 100);
-  result.level = getRiskLevel(result.score);
+  result.level = result.trusted ? "Trusted" : getRiskLevel(result.score);
 
   if (result.reasons.length === 0) {
     result.reasons.push("No protected-brand imitation signals were found");
@@ -360,12 +360,16 @@ export function analyzeDomain(hostname, options = {}) {
     });
   });
 
-  SUSPICIOUS_KEYWORDS.forEach((keyword) => {
-    const keywordPattern = new RegExp(`(^|[-.])${keyword}($|[-.])`);
-    if (keywordPattern.test(normalizedHostname)) {
-      addReason(result, 15, `Contains suspicious keyword "${keyword}"`);
-    }
-  });
+  const scoreBeforeKeywordChecks = result.score;
+
+  if (scoreBeforeKeywordChecks > 0) {
+    SUSPICIOUS_KEYWORDS.forEach((keyword) => {
+      const keywordPattern = new RegExp(`(^|[-.])${keyword}($|[-.])`);
+      if (keywordPattern.test(normalizedHostname)) {
+        addReason(result, 15, `Contains suspicious keyword "${keyword}"`);
+      }
+    });
+  }
 
   if (domainLabel.includes("-")) {
     addReason(result, 10, "Uses hyphens in the main domain name");
@@ -379,7 +383,7 @@ export function analyzeDomain(hostname, options = {}) {
     addReason(result, 20, "Contains character substitution such as 0 for o, 1 for l/i, or rn for m");
   }
 
-  if (normalizedHostname.split(".").length > 3) {
+  if (result.score > 0 && normalizedHostname.split(".").length > 3) {
     addReason(result, 10, "Uses multiple subdomain levels, which can hide the real domain");
   }
 

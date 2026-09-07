@@ -103,7 +103,7 @@ Its job is deliberately small:
 
 ## Trusted Domains
 
-Trusted domains are local overrides for known-safe false positives. If a hostname matches a trusted domain or one of its subdomains, VaultGuard returns a Safe result and marks the analysis as trusted.
+Trusted domains are local overrides for known-safe false positives. If a hostname matches a trusted domain or one of its subdomains, VaultGuard returns a Trusted result and marks the analysis as trusted.
 
 Trusted domains should be used carefully and only for domains the user or company actually controls or has independently verified.
 

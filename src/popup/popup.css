@@ -84,9 +84,14 @@ h1 {
   background: #d1e7dd;
 }
 
-.risk.suspicious {
+.risk.needs-review {
   color: #664d03;
   background: #fff3cd;
+}
+
+.risk.trusted {
+  color: #0f514a;
+  background: #ccfbf1;
 }
 
 .risk.high-risk {
@@ -225,9 +230,14 @@ h1 {
     background: #123829;
   }
 
-  .risk.suspicious {
+  .risk.needs-review {
     color: #ffe7a6;
     background: #3b2e10;
+  }
+
+  .risk.trusted {
+    color: #b7f7ee;
+    background: #143b38;
   }
 
   .risk.high-risk {
