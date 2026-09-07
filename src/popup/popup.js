@@ -7,7 +7,8 @@ const HISTORY_KEY = "vaultguardHistory";
 const DEFAULT_SETTINGS = {
   autoScanEnabled: false,
   warningBannerEnabled: true,
-  historyEnabled: true
+  historyEnabled: true,
+  historyLimit: 100
 };
 const hostnameElement = document.querySelector("#hostname");
 const riskLevelElement = document.querySelector("#risk-level");
@@ -17,6 +18,12 @@ const openOptionsButton = document.querySelector("#open-options");
 const autoScanStatusElement = document.querySelector("#auto-scan-status");
 const historyElement = document.querySelector("#history");
 const clearHistoryButton = document.querySelector("#clear-history");
+const openHistoryButton = document.querySelector("#open-history");
+
+function getHistoryLimit(settings) {
+  const parsedLimit = Number(settings.historyLimit);
+  return [25, 100, 500].includes(parsedLimit) ? parsedLimit : DEFAULT_SETTINGS.historyLimit;
+}
 
 function setRiskClass(level) {
   riskLevelElement.className = "risk";
@@ -114,10 +121,11 @@ async function saveManualHistory(history, analysis, settings) {
       hostname: analysis.hostname,
       level: analysis.level,
       score: analysis.score,
+      trusted: Boolean(analysis.trusted),
       checkedAt: new Date().toISOString()
     },
     ...history.filter((item) => item.hostname !== analysis.hostname)
-  ].slice(0, 25);
+  ].slice(0, getHistoryLimit(settings));
 
   await chrome.storage.local.set({ [HISTORY_KEY]: nextHistory });
   renderHistory(nextHistory);
@@ -162,4 +170,7 @@ openOptionsButton.addEventListener("click", () => {
 clearHistoryButton.addEventListener("click", async () => {
   await chrome.storage.local.set({ [HISTORY_KEY]: [] });
   renderHistory([]);
+});
+openHistoryButton.addEventListener("click", () => {
+  chrome.runtime.sendMessage({ type: "VAULTGUARD_OPEN_HISTORY" });
 });

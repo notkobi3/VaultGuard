@@ -8,9 +8,14 @@ const DISMISS_STORAGE_KEY = "vaultguardDismissedWarnings";
 const DEFAULT_SETTINGS = {
   autoScanEnabled: false,
   warningBannerEnabled: true,
-  historyEnabled: true
+  historyEnabled: true,
+  historyLimit: 100
 };
-const MAX_HISTORY_ITEMS = 25;
+
+function getHistoryLimit(settings) {
+  const parsedLimit = Number(settings.historyLimit);
+  return [25, 100, 500].includes(parsedLimit) ? parsedLimit : DEFAULT_SETTINGS.historyLimit;
+}
 
 function getBadgeForLevel(level) {
   if (level === "High Risk") {
@@ -65,15 +70,16 @@ function createHistoryItem(analysis) {
     hostname: analysis.hostname,
     level: analysis.level,
     score: analysis.score,
+    trusted: Boolean(analysis.trusted),
     checkedAt: new Date().toISOString()
   };
 }
 
-async function saveHistory(history, analysis) {
+async function saveHistory(history, analysis, settings) {
   const nextHistory = [
     createHistoryItem(analysis),
     ...history.filter((item) => item.hostname !== analysis.hostname)
-  ].slice(0, MAX_HISTORY_ITEMS);
+  ].slice(0, getHistoryLimit(settings));
 
   await chrome.storage.local.set({ [HISTORY_STORAGE_KEY]: nextHistory });
 }
@@ -172,7 +178,7 @@ async function scanTab(tabId, url) {
   await updateTabBadge(tabId, analysis);
 
   if (settings.historyEnabled) {
-    await saveHistory(history, analysis);
+    await saveHistory(history, analysis, settings);
   }
 
   if (settings.warningBannerEnabled && analysis.level === "High Risk" && !dismissedWarnings[analysis.hostname]) {
@@ -233,5 +239,15 @@ chrome.runtime.onMessage.addListener((message) => {
         }
       });
     });
+  }
+
+  if (message?.type === "VAULTGUARD_OPEN_HISTORY") {
+    chrome.tabs.create({ url: chrome.runtime.getURL("src/history/history.html") });
+  }
+});
+
+chrome.runtime.onInstalled.addListener(({ reason }) => {
+  if (reason === "install") {
+    chrome.tabs.create({ url: chrome.runtime.getURL("src/onboarding/onboarding.html") });
   }
 });

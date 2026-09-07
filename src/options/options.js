@@ -7,7 +7,8 @@ const DISMISSED_KEY = "vaultguardDismissedWarnings";
 const DEFAULT_SETTINGS = {
   autoScanEnabled: false,
   warningBannerEnabled: true,
-  historyEnabled: true
+  historyEnabled: true,
+  historyLimit: 100
 };
 const POLICY_PRESETS = {
   crypto: {
@@ -62,6 +63,7 @@ const status = document.querySelector("#status");
 const autoScanEnabled = document.querySelector("#autoScanEnabled");
 const warningBannerEnabled = document.querySelector("#warningBannerEnabled");
 const historyEnabled = document.querySelector("#historyEnabled");
+const historyLimit = document.querySelector("#historyLimit");
 const trustedForm = document.querySelector("#trustedForm");
 const trustedDomain = document.querySelector("#trustedDomain");
 const trustedCards = document.querySelector("#trustedCards");
@@ -69,6 +71,7 @@ const trustedTemplate = document.querySelector("#trustedTemplate");
 const exportPolicy = document.querySelector("#exportPolicy");
 const importPolicy = document.querySelector("#importPolicy");
 const clearDismissed = document.querySelector("#clearDismissed");
+const openOnboarding = document.querySelector("#openOnboarding");
 const presetButtons = document.querySelectorAll(".preset");
 
 let brands = [];
@@ -136,7 +139,9 @@ function renderSettings() {
   autoScanEnabled.checked = Boolean(settings.autoScanEnabled);
   warningBannerEnabled.checked = Boolean(settings.warningBannerEnabled);
   historyEnabled.checked = Boolean(settings.historyEnabled);
+  historyLimit.value = String([25, 100, 500].includes(Number(settings.historyLimit)) ? settings.historyLimit : 100);
   warningBannerEnabled.disabled = !settings.autoScanEnabled;
+  historyLimit.disabled = !settings.historyEnabled;
 }
 
 function renderBrands() {
@@ -243,7 +248,7 @@ function downloadBrands() {
 
 function downloadPolicy() {
   downloadJson("vaultguard-policy.json", {
-    version: "0.7.0",
+    version: "1.0.0",
     exportedAt: new Date().toISOString(),
     settings,
     protectedBrands: brands,
@@ -381,9 +386,17 @@ historyEnabled.addEventListener("change", async () => {
   renderSettings();
   await saveSettings(settings.historyEnabled ? "Hostname history enabled." : "Hostname history disabled.");
 });
+historyLimit.addEventListener("change", async () => {
+  settings.historyLimit = Number(historyLimit.value);
+  renderSettings();
+  await saveSettings(`History retention set to the last ${settings.historyLimit} checks.`);
+});
 clearDismissed.addEventListener("click", async () => {
   await chrome.storage.local.set({ [DISMISSED_KEY]: {} });
   setStatus("Dismissed warning list cleared.");
+});
+openOnboarding.addEventListener("click", () => {
+  chrome.tabs.create({ url: chrome.runtime.getURL("src/onboarding/onboarding.html") });
 });
 presetButtons.forEach((button) => {
   button.addEventListener("click", () => applyPreset(button.dataset.preset));

@@ -41,8 +41,16 @@
           <input id="historyEnabled" type="checkbox">
           <span>
             <strong>Save hostname history</strong>
-            <small>Keeps the latest 25 checked hostnames locally for review.</small>
+            <small>Keeps checked hostnames locally for review.</small>
           </span>
+        </label>
+        <label class="select-row">
+          History retention
+          <select id="historyLimit">
+            <option value="25">Last 25 checks</option>
+            <option value="100">Last 100 checks</option>
+            <option value="500">Last 500 checks</option>
+          </select>
         </label>
       </section>
 
@@ -57,6 +65,7 @@
           <button class="quiet preset" type="button" data-preset="cloud">Cloud Dev Team</button>
           <button id="exportPolicy" class="quiet" type="button">Export Policy</button>
           <button id="importPolicy" class="quiet" type="button">Import Policy</button>
+          <button id="openOnboarding" class="quiet" type="button">Open Onboarding</button>
         </div>
       </section>
 

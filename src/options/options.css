@@ -17,7 +17,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -69,7 +70,7 @@ header p {
 
 .protection-settings {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) repeat(3, minmax(190px, 270px));
+  grid-template-columns: minmax(220px, 1fr) repeat(4, minmax(170px, 250px));
   gap: 16px;
   align-items: start;
   margin-bottom: 16px;
@@ -143,7 +144,17 @@ label {
   opacity: 0.62;
 }
 
-input {
+.select-row {
+  align-self: stretch;
+  margin-bottom: 0;
+  padding: 12px;
+  border: 1px solid #d8e1ea;
+  border-radius: 8px;
+  background: #f8fbfc;
+}
+
+input,
+select {
   width: 100%;
   border: 1px solid #b8c4d0;
   border-radius: 6px;

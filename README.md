@@ -2,11 +2,11 @@
 
 VaultGuard is an educational Chrome extension that helps identify phishing-style domain names for banking, cryptocurrency, wallet, and financial-service websites.
 
-VaultGuard v0.7 analyzes website hostnames locally and explains why a domain looks safe, suspicious, or high risk.
+VaultGuard v1.0 analyzes website hostnames locally and explains why a domain looks safe, suspicious, or high risk.
 
 ## Educational Prototype Warning
 
-VaultGuard v0.7 is a learning project and should not be treated as a complete financial-security product. It can identify many obvious domain imitation patterns, but it cannot prove that a website is safe.
+VaultGuard v1.0 is a release-candidate learning project and should not be treated as a complete financial-security product. It can identify many obvious domain imitation patterns, but it cannot prove that a website is safe.
 
 ## Current Features
 
@@ -21,9 +21,14 @@ VaultGuard v0.7 is a learning project and should not be treated as a complete fi
 - Optional high-risk warning banner for pages that look like brand-imitation phishing attempts.
 - Trusted-domain list for known-safe false positives.
 - Hostname-only recent check history with local clear controls.
+- Dedicated history page with Safe, Suspicious, High Risk, and Trusted filters.
+- JSON and CSV history export.
+- Configurable history retention for the last 25, 100, or 500 checks.
 - Temporary hostname warning dismissals.
 - Company presets for crypto, finance, and cloud development teams.
 - Full policy export and import for repeat customer setups.
+- First-run onboarding page.
+- Chrome Web Store listing draft, release checklist, and enterprise install notes.
 - Duplicate reason handling to avoid repeated identical warnings.
 - Extension badge status after popup analysis:
   - `OK`: Safe
@@ -52,6 +57,14 @@ vaultguard/
       options.html
       options.css
       options.js
+    onboarding/
+      onboarding.html
+      onboarding.css
+      onboarding.js
+    history/
+      history.html
+      history.css
+      history.js
     background/
       background.js
     content/
@@ -83,6 +96,11 @@ vaultguard/
       permissions.md
       vulnerability-disclosure.md
       update-checklist.md
+    store/
+      chrome-web-store-checklist.md
+      listing-copy.md
+      enterprise-install.md
+  CHANGELOG.md
 ```
 
 ## Component Flow
@@ -132,7 +150,7 @@ High-risk pages can receive an on-page warning banner
 
 ## Security Philosophy
 
-VaultGuard v0.7 follows a privacy-first design:
+VaultGuard v1.0 follows a privacy-first design:
 
 - Analysis happens locally in the browser.
 - Manual checks read the current tab URL when the user opens the popup.
@@ -145,7 +163,7 @@ VaultGuard v0.7 follows a privacy-first design:
 
 ## What VaultGuard Never Collects
 
-VaultGuard v0.7 does not collect:
+VaultGuard v1.0 does not collect:
 
 - Passwords
 - Banking credentials
@@ -213,6 +231,16 @@ These are working drafts, not legal advice. Review them with a qualified attorne
 
 Update the legal and trust documents whenever VaultGuard changes permissions, stores new data, adds accounts, adds a backend, adds analytics, adds payments, or makes stronger security claims.
 
+## Store and Release Documents
+
+Chrome Web Store and company-readiness drafts live in `docs/store/`:
+
+- `chrome-web-store-checklist.md`
+- `listing-copy.md`
+- `enterprise-install.md`
+
+Release history is tracked in `CHANGELOG.md`.
+
 ## Install Locally in Chrome Developer Mode
 
 1. Open Chrome.
@@ -223,6 +251,7 @@ Update the legal and trust documents whenever VaultGuard changes permissions, st
 6. Pin VaultGuard to the toolbar if you want quick access.
 7. Open a website, then click the VaultGuard icon to analyze the current hostname.
 8. Open VaultGuard options and enable auto-scan if you want automatic badge updates.
+9. Use the onboarding page for a guided first setup.
 
 ## Edit Protected Brands
 
@@ -233,7 +262,7 @@ Update the legal and trust documents whenever VaultGuard changes permissions, st
 5. Add, remove, import, export, or restore protected brands.
 6. Add trusted domains for known-safe false positives.
 7. Load a company preset or export a full policy file for another setup.
-8. Turn auto-scan, history, and the high-risk banner on or off.
+8. Turn auto-scan, history, history retention, and the high-risk banner on or off.
 
 Only store brand names, aliases, and legitimate domains.
 
@@ -259,14 +288,15 @@ The tests verify that known legitimate domains have a Safe risk score and phishi
 - Add a trusted domain and confirm it bypasses warnings for that hostname.
 - Load each company preset and export a policy file.
 - Open the popup and confirm recent hostname checks appear.
+- Open the full history page, filter results, and export JSON and CSV files.
 - Enable auto-scan, visit a risky test hostname, and confirm the badge updates automatically.
 - Enable the warning banner and confirm High Risk hostnames show a top-of-page warning.
 - Open `chrome://extensions` and confirm VaultGuard handles Chrome internal pages gracefully.
 
-## Recommended v0.8 Tasks
+## Recommended v1.1 Tasks
 
-1. Add a dedicated history page with filters and retention settings.
-2. Add screenshots and a Chrome Web Store readiness checklist.
-3. Add enterprise install notes for managed Chrome environments.
-4. Add optional remote reputation checks only after a privacy and legal review.
-5. Add a polished first-run onboarding page.
+1. Add real Chrome Web Store screenshots after loading the extension in Chrome.
+2. Add managed-policy support for company-wide protected brands and trusted domains.
+3. Add optional remote reputation checks only after a privacy and legal review.
+4. Add content-script visual QA for the warning banner across common websites.
+5. Add a customer-facing website and payment flow after legal review.

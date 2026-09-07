@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>VaultGuard History</title>
+    <link rel="stylesheet" href="history.css">
+  </head>
+  <body>
+    <main class="page-shell">
+      <header>
+        <p class="eyebrow">VaultGuard</p>
+        <h1>Hostname History</h1>
+        <p>Review locally saved hostname checks. VaultGuard stores hostnames only, not full URLs or page content.</p>
+      </header>
+
+      <section class="toolbar">
+        <label>
+          Filter
+          <select id="levelFilter">
+            <option value="all">All results</option>
+            <option value="Safe">Safe</option>
+            <option value="Suspicious">Suspicious</option>
+            <option value="High Risk">High Risk</option>
+            <option value="trusted">Trusted</option>
+          </select>
+        </label>
+        <div class="actions">
+          <button id="exportJson" type="button">Export JSON</button>
+          <button id="exportCsv" type="button">Export CSV</button>
+          <button id="clearHistory" class="quiet" type="button">Clear History</button>
+        </div>
+      </section>
+
+      <section class="history-card">
+        <div id="historyRows" class="history-rows" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <template id="historyTemplate">
+      <article class="history-row">
+        <div>
+          <h2></h2>
+          <p></p>
+        </div>
+        <strong></strong>
+      </article>
+    </template>
+
+    <script type="module" src="history.js"></script>
+  </body>
+</html>

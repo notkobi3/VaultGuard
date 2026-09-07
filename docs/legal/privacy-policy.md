@@ -25,7 +25,7 @@ VaultGuard does not ask users to enter passwords, seed phrases, private keys, re
 
 ## Local Processing
 
-VaultGuard v0.7 performs domain analysis locally inside the browser. The extension does not send analyzed hostnames, protected-brand settings, trusted domains, history, or risk scores to a VaultGuard server.
+VaultGuard v1.0 performs domain analysis locally inside the browser. The extension does not send analyzed hostnames, protected-brand settings, trusted domains, history, or risk scores to a VaultGuard server.
 
 ## Local Storage
 
@@ -44,13 +44,13 @@ Users can clear recent check history from the popup and can clear dismissed warn
 
 ## Website Content
 
-VaultGuard v0.7 does not inspect webpage text, form fields, passwords, payment forms, banking transactions, cryptocurrency transactions, or account balances.
+VaultGuard v1.0 does not inspect webpage text, form fields, passwords, payment forms, banking transactions, cryptocurrency transactions, or account balances.
 
 When the high-risk warning banner is enabled, VaultGuard can inject a visual warning into pages whose hostnames are rated High Risk.
 
 ## Data Sharing
 
-VaultGuard v0.7 does not sell, rent, or share user data because it does not transmit user data to a server.
+VaultGuard v1.0 does not sell, rent, or share user data because it does not transmit user data to a server.
 
 If future versions add accounts, cloud sync, analytics, team dashboards, or third-party integrations, this Privacy Policy must be updated before release.
 
