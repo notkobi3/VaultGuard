@@ -37,6 +37,9 @@ testRiskyDomain("chase-account-verification.com", 50, "Domain resembles Chase");
 testRiskyDomain("metamask-wallet-support.net", 50, "Domain resembles MetaMask");
 testRiskyDomain("paypal.com.example.net", 45, "Places approved domain \"paypal.com\" inside a different hostname");
 testRiskyDomain("xn--coinbase-9ib.com", 40, "Contains punycode label");
+testRiskyDomain("paypaI-password-reset.com", 30, "Contains suspicious keyword \"password\"");
+testRiskyDomain("paypa1--secure.com", 45, "Uses repeated hyphens");
+testRiskyDomain("secure.login.coinbase.co.uk.example.net", 55, "Uses multiple subdomain levels");
 
 const customBrandResult = analyzeDomain("mybroker-login.com", {
   protectedBrands: [
@@ -64,6 +67,26 @@ assert.equal(
   duplicateReasonResult.reasons.filter((reason) => reason.includes("Places approved domain")).length,
   1,
   "duplicate reasons should be collapsed"
+);
+
+const trustedDomainResult = analyzeDomain("login.paypa1.com", {
+  trustedDomains: ["paypa1.com"]
+});
+assert.equal(trustedDomainResult.level, "Safe", "trusted domains should bypass warnings");
+assert.equal(trustedDomainResult.trusted, true, "trusted domain result should be marked trusted");
+
+const coUkResult = analyzeDomain("secure.paypal.co.uk.example.net", {
+  protectedBrands: [
+    {
+      name: "PayPal UK",
+      aliases: ["paypal"],
+      domains: ["paypal.co.uk"]
+    }
+  ]
+});
+assert.ok(
+  coUkResult.reasons.some((reason) => reason.includes("Places approved domain \"paypal.co.uk\"")),
+  "multi-part suffix domains should be understood during deceptive-domain checks"
 );
 
 console.log("All VaultGuard domain analyzer tests passed.");

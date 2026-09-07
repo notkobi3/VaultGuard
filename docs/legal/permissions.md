@@ -32,7 +32,7 @@ Purpose: lets VaultGuard react to tab URL changes.
 
 Used for: optional auto-scan badge updates while browsing.
 
-Privacy note: URLs can reveal browsing context. VaultGuard v0.4 uses the URL to extract the hostname locally and does not transmit it to a server.
+Privacy note: URLs can reveal browsing context. VaultGuard v0.7 uses the URL to extract the hostname locally and does not transmit it to a server.
 
 ## `scripting`
 

@@ -1,11 +1,53 @@
 import { PROTECTED_BRANDS } from "../utils/domainAnalyzer.js";
 
-const STORAGE_KEY = "vaultguardProtectedBrands";
+const BRAND_KEY = "vaultguardProtectedBrands";
 const SETTINGS_KEY = "vaultguardSettings";
+const TRUSTED_KEY = "vaultguardTrustedDomains";
+const DISMISSED_KEY = "vaultguardDismissedWarnings";
 const DEFAULT_SETTINGS = {
   autoScanEnabled: false,
-  warningBannerEnabled: true
+  warningBannerEnabled: true,
+  historyEnabled: true
 };
+const POLICY_PRESETS = {
+  crypto: {
+    label: "Crypto Team",
+    brands: [
+      { name: "Coinbase", aliases: ["coinbase"], domains: ["coinbase.com"] },
+      { name: "MetaMask", aliases: ["metamask"], domains: ["metamask.io"] },
+      { name: "Kraken", aliases: ["kraken"], domains: ["kraken.com"] },
+      { name: "Binance", aliases: ["binance"], domains: ["binance.com", "binance.us"] },
+      { name: "Uniswap", aliases: ["uniswap"], domains: ["uniswap.org"] },
+      { name: "OpenSea", aliases: ["opensea"], domains: ["opensea.io"] }
+    ],
+    trustedDomains: []
+  },
+  finance: {
+    label: "Finance Team",
+    brands: [
+      { name: "PayPal", aliases: ["paypal"], domains: ["paypal.com"] },
+      { name: "Chase", aliases: ["chase"], domains: ["chase.com"] },
+      { name: "Bank of America", aliases: ["bankofamerica", "bofa"], domains: ["bankofamerica.com"] },
+      { name: "Wells Fargo", aliases: ["wellsfargo"], domains: ["wellsfargo.com"] },
+      { name: "Fidelity", aliases: ["fidelity"], domains: ["fidelity.com"] },
+      { name: "Charles Schwab", aliases: ["schwab", "charlesschwab"], domains: ["schwab.com"] }
+    ],
+    trustedDomains: []
+  },
+  cloud: {
+    label: "Cloud Dev Team",
+    brands: [
+      { name: "OpenAI", aliases: ["openai", "chatgpt"], domains: ["openai.com", "chatgpt.com"] },
+      { name: "Supabase", aliases: ["supabase"], domains: ["supabase.com"] },
+      { name: "Vercel", aliases: ["vercel"], domains: ["vercel.com"] },
+      { name: "Railway", aliases: ["railway"], domains: ["railway.app", "railway.com"] },
+      { name: "GitHub", aliases: ["github"], domains: ["github.com"] },
+      { name: "Cloudflare", aliases: ["cloudflare"], domains: ["cloudflare.com"] }
+    ],
+    trustedDomains: []
+  }
+};
+
 const brandForm = document.querySelector("#brandForm");
 const brandName = document.querySelector("#brandName");
 const brandAliases = document.querySelector("#brandAliases");
@@ -19,9 +61,20 @@ const resetBrands = document.querySelector("#resetBrands");
 const status = document.querySelector("#status");
 const autoScanEnabled = document.querySelector("#autoScanEnabled");
 const warningBannerEnabled = document.querySelector("#warningBannerEnabled");
+const historyEnabled = document.querySelector("#historyEnabled");
+const trustedForm = document.querySelector("#trustedForm");
+const trustedDomain = document.querySelector("#trustedDomain");
+const trustedCards = document.querySelector("#trustedCards");
+const trustedTemplate = document.querySelector("#trustedTemplate");
+const exportPolicy = document.querySelector("#exportPolicy");
+const importPolicy = document.querySelector("#importPolicy");
+const clearDismissed = document.querySelector("#clearDismissed");
+const presetButtons = document.querySelectorAll(".preset");
 
 let brands = [];
+let trustedDomains = [];
 let settings = { ...DEFAULT_SETTINGS };
+let importMode = "brands";
 
 function setStatus(message) {
   status.textContent = message;
@@ -35,7 +88,7 @@ function splitList(value) {
 }
 
 function normalizeDomain(value) {
-  return value
+  return String(value || "")
     .trim()
     .toLowerCase()
     .replace(/^https?:\/\//, "")
@@ -71,19 +124,18 @@ function validateBrands(value) {
   return value.map(cleanBrand);
 }
 
-async function saveBrands(message = "Protected brand list saved locally.") {
-  await chrome.storage.local.set({ [STORAGE_KEY]: brands });
-  setStatus(message);
-}
+function validateTrustedDomains(value) {
+  if (!Array.isArray(value)) {
+    throw new Error("Trusted domains must be an array.");
+  }
 
-async function saveSettings(message = "Browsing protection settings saved locally.") {
-  await chrome.storage.local.set({ [SETTINGS_KEY]: settings });
-  setStatus(message);
+  return [...new Set(value.map(String).map(normalizeDomain).filter(Boolean))];
 }
 
 function renderSettings() {
   autoScanEnabled.checked = Boolean(settings.autoScanEnabled);
   warningBannerEnabled.checked = Boolean(settings.warningBannerEnabled);
+  historyEnabled.checked = Boolean(settings.historyEnabled);
   warningBannerEnabled.disabled = !settings.autoScanEnabled;
 }
 
@@ -113,26 +165,99 @@ function renderBrands() {
   }
 }
 
-async function loadBrands() {
-  const saved = await chrome.storage.local.get([STORAGE_KEY, SETTINGS_KEY]);
-  brands = validateBrands(saved[STORAGE_KEY] || PROTECTED_BRANDS);
+function renderTrustedDomains() {
+  trustedCards.textContent = "";
+
+  trustedDomains.forEach((domain, index) => {
+    const card = trustedTemplate.content.firstElementChild.cloneNode(true);
+
+    card.querySelector("h3").textContent = domain;
+    card.querySelector(".remove").addEventListener("click", async () => {
+      trustedDomains.splice(index, 1);
+      renderTrustedDomains();
+      await saveTrustedDomains(`${domain} removed from trusted domains.`);
+    });
+
+    trustedCards.append(card);
+  });
+
+  if (trustedDomains.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "empty";
+    empty.textContent = "No trusted domains saved yet.";
+    trustedCards.append(empty);
+  }
+}
+
+function downloadJson(filename, value) {
+  const blob = new Blob([JSON.stringify(value, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+async function saveBrands(message = "Protected brand list saved locally.") {
+  await chrome.storage.local.set({ [BRAND_KEY]: brands });
+  setStatus(message);
+}
+
+async function saveTrustedDomains(message = "Trusted domain list saved locally.") {
+  await chrome.storage.local.set({ [TRUSTED_KEY]: trustedDomains });
+  setStatus(message);
+}
+
+async function saveSettings(message = "Browsing protection settings saved locally.") {
+  await chrome.storage.local.set({ [SETTINGS_KEY]: settings });
+  setStatus(message);
+}
+
+async function savePolicy(message) {
+  await chrome.storage.local.set({
+    [BRAND_KEY]: brands,
+    [TRUSTED_KEY]: trustedDomains,
+    [SETTINGS_KEY]: settings
+  });
+  setStatus(message);
+}
+
+async function loadOptions() {
+  const saved = await chrome.storage.local.get([BRAND_KEY, SETTINGS_KEY, TRUSTED_KEY]);
+  brands = validateBrands(saved[BRAND_KEY] || PROTECTED_BRANDS);
+  trustedDomains = validateTrustedDomains(saved[TRUSTED_KEY] || []);
   settings = {
     ...DEFAULT_SETTINGS,
     ...(saved[SETTINGS_KEY] || {})
   };
   renderBrands();
+  renderTrustedDomains();
   renderSettings();
 }
 
 function downloadBrands() {
-  const blob = new Blob([JSON.stringify(brands, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
+  downloadJson("vaultguard-protected-brands.json", brands);
+}
 
-  link.href = url;
-  link.download = "vaultguard-protected-brands.json";
-  link.click();
-  URL.revokeObjectURL(url);
+function downloadPolicy() {
+  downloadJson("vaultguard-policy.json", {
+    version: "0.7.0",
+    exportedAt: new Date().toISOString(),
+    settings,
+    protectedBrands: brands,
+    trustedDomains
+  });
+}
+
+function importSettings(parsed) {
+  settings = {
+    ...DEFAULT_SETTINGS,
+    ...(parsed.settings || {})
+  };
+  brands = validateBrands(parsed.protectedBrands || parsed.brands || []);
+  trustedDomains = validateTrustedDomains(parsed.trustedDomains || []);
 }
 
 function importBrandFile(file) {
@@ -140,17 +265,42 @@ function importBrandFile(file) {
 
   reader.addEventListener("load", async () => {
     try {
-      brands = validateBrands(JSON.parse(String(reader.result || "[]")));
-      renderBrands();
-      await saveBrands("Protected brand list imported locally.");
+      const parsed = JSON.parse(String(reader.result || "[]"));
+
+      if (importMode === "policy") {
+        importSettings(parsed);
+        renderBrands();
+        renderTrustedDomains();
+        renderSettings();
+        await savePolicy("VaultGuard policy imported locally.");
+      } else {
+        brands = validateBrands(parsed);
+        renderBrands();
+        await saveBrands("Protected brand list imported locally.");
+      }
     } catch (error) {
       setStatus(`Could not import: ${error.message}`);
     } finally {
       importFile.value = "";
+      importMode = "brands";
     }
   });
 
   reader.readAsText(file);
+}
+
+async function applyPreset(presetName) {
+  const preset = POLICY_PRESETS[presetName];
+
+  if (!preset) {
+    return;
+  }
+
+  brands = validateBrands(preset.brands);
+  trustedDomains = validateTrustedDomains(preset.trustedDomains);
+  renderBrands();
+  renderTrustedDomains();
+  await savePolicy(`${preset.label} preset loaded. Review and customize domains before sharing with a customer.`);
 }
 
 brandForm.addEventListener("submit", async (event) => {
@@ -174,8 +324,34 @@ brandForm.addEventListener("submit", async (event) => {
   }
 });
 
+trustedForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  try {
+    const domain = normalizeDomain(trustedDomain.value);
+
+    if (!domain) {
+      throw new Error("Enter a domain to trust.");
+    }
+
+    trustedDomains = validateTrustedDomains([...trustedDomains, domain]);
+    renderTrustedDomains();
+    await saveTrustedDomains(`${domain} added to trusted domains.`);
+    trustedForm.reset();
+    trustedDomain.focus();
+  } catch (error) {
+    setStatus(`Could not add trusted domain: ${error.message}`);
+  }
+});
+
 exportBrands.addEventListener("click", downloadBrands);
+exportPolicy.addEventListener("click", downloadPolicy);
 importBrands.addEventListener("click", () => {
+  importMode = "brands";
+  importFile.click();
+});
+importPolicy.addEventListener("click", () => {
+  importMode = "policy";
   importFile.click();
 });
 importFile.addEventListener("change", () => {
@@ -200,5 +376,17 @@ warningBannerEnabled.addEventListener("change", async () => {
   renderSettings();
   await saveSettings(settings.warningBannerEnabled ? "High-risk warning banner enabled." : "High-risk warning banner disabled.");
 });
+historyEnabled.addEventListener("change", async () => {
+  settings.historyEnabled = historyEnabled.checked;
+  renderSettings();
+  await saveSettings(settings.historyEnabled ? "Hostname history enabled." : "Hostname history disabled.");
+});
+clearDismissed.addEventListener("click", async () => {
+  await chrome.storage.local.set({ [DISMISSED_KEY]: {} });
+  setStatus("Dismissed warning list cleared.");
+});
+presetButtons.forEach((button) => {
+  button.addEventListener("click", () => applyPreset(button.dataset.preset));
+});
 
-loadBrands();
+loadOptions();

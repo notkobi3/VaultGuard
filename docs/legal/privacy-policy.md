@@ -16,33 +16,41 @@ VaultGuard may process:
 
 - The hostname of the current website, such as `example.com`.
 - Locally saved protected-brand settings, such as brand names, aliases, and legitimate domains.
+- Locally saved trusted domains.
+- Hostname-only recent check history, if history is enabled.
+- Dismissed warning hostnames.
 - Locally saved browsing-protection settings, such as whether auto-scan is enabled.
 
 VaultGuard does not ask users to enter passwords, seed phrases, private keys, recovery codes, bank details, trading credentials, API keys, or payment card numbers.
 
 ## Local Processing
 
-VaultGuard v0.4 performs domain analysis locally inside the browser. The extension does not send analyzed hostnames, protected-brand settings, or risk scores to a VaultGuard server.
+VaultGuard v0.7 performs domain analysis locally inside the browser. The extension does not send analyzed hostnames, protected-brand settings, trusted domains, history, or risk scores to a VaultGuard server.
 
 ## Local Storage
 
 VaultGuard uses Chrome local extension storage to save:
 
 - Protected-brand list settings.
+- Trusted-domain settings.
 - Auto-scan setting.
 - High-risk warning banner setting.
+- Hostname-only recent check history, if enabled.
+- Dismissed warning hostnames.
 
 This information stays in the user browser unless the user exports it or future versions add optional sync or account features.
 
+Users can clear recent check history from the popup and can clear dismissed warnings from the options page.
+
 ## Website Content
 
-VaultGuard v0.4 does not inspect webpage text, form fields, passwords, payment forms, banking transactions, cryptocurrency transactions, or account balances.
+VaultGuard v0.7 does not inspect webpage text, form fields, passwords, payment forms, banking transactions, cryptocurrency transactions, or account balances.
 
 When the high-risk warning banner is enabled, VaultGuard can inject a visual warning into pages whose hostnames are rated High Risk.
 
 ## Data Sharing
 
-VaultGuard v0.4 does not sell, rent, or share user data because it does not transmit user data to a server.
+VaultGuard v0.7 does not sell, rent, or share user data because it does not transmit user data to a server.
 
 If future versions add accounts, cloud sync, analytics, team dashboards, or third-party integrations, this Privacy Policy must be updated before release.
 

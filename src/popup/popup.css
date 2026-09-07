@@ -11,7 +11,7 @@
 
 body {
   width: 340px;
-  min-height: 260px;
+  min-height: 340px;
   margin: 0;
   background: #f5f7fb;
 }
@@ -105,6 +105,69 @@ h1 {
 
 .reasons li {
   margin-bottom: 6px;
+}
+
+.history-panel {
+  border-top: 1px solid #d9e0ec;
+  margin-top: 14px;
+  padding-top: 12px;
+}
+
+.mini-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.mini-header h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.text-button {
+  border: 0;
+  padding: 0;
+  color: #1f6670;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.history-list {
+  display: grid;
+  gap: 6px;
+  max-height: 120px;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  list-style: none;
+}
+
+.history-list li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid #d9e0ec;
+  border-radius: 6px;
+  padding: 7px 8px;
+  background: #ffffff;
+  font-size: 12px;
+}
+
+.history-host {
+  overflow-wrap: anywhere;
+}
+
+.history-score {
+  border-radius: 4px;
+  padding: 3px 5px;
+  background: #e7edf5;
+  font-weight: 800;
 }
 
 .popup-footer {

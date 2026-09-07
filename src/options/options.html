@@ -37,6 +37,27 @@
             <small>Shows an on-page warning when auto-scan finds a high-risk hostname.</small>
           </span>
         </label>
+        <label class="toggle-row">
+          <input id="historyEnabled" type="checkbox">
+          <span>
+            <strong>Save hostname history</strong>
+            <small>Keeps the latest 25 checked hostnames locally for review.</small>
+          </span>
+        </label>
+      </section>
+
+      <section class="editor preset-panel">
+        <div>
+          <h2>Company Presets</h2>
+          <p>Load a starter policy for common teams, then adjust domains for the customer.</p>
+        </div>
+        <div class="actions">
+          <button class="quiet preset" type="button" data-preset="crypto">Crypto Team</button>
+          <button class="quiet preset" type="button" data-preset="finance">Finance Team</button>
+          <button class="quiet preset" type="button" data-preset="cloud">Cloud Dev Team</button>
+          <button id="exportPolicy" class="quiet" type="button">Export Policy</button>
+          <button id="importPolicy" class="quiet" type="button">Import Policy</button>
+        </div>
       </section>
 
       <section class="editor-grid">
@@ -71,6 +92,25 @@
           <p id="status" class="status" role="status"></p>
         </section>
       </section>
+
+      <section class="editor-grid lower-grid">
+        <form id="trustedForm" class="editor" autocomplete="off">
+          <h2>Add Trusted Domain</h2>
+          <label>
+            Domain
+            <input id="trustedDomain" type="text" placeholder="Example: login.company.com">
+          </label>
+          <button type="submit">Add Trusted Domain</button>
+        </form>
+
+        <section class="editor">
+          <div class="section-header">
+            <h2>Trusted Domains</h2>
+            <button id="clearDismissed" class="quiet" type="button">Clear Dismissed Warnings</button>
+          </div>
+          <div id="trustedCards" class="brand-cards" aria-live="polite"></div>
+        </section>
+      </section>
     </main>
 
     <template id="brandTemplate">
@@ -79,6 +119,16 @@
           <h3></h3>
           <p class="aliases"></p>
           <p class="domains"></p>
+        </div>
+        <button class="remove quiet" type="button">Remove</button>
+      </article>
+    </template>
+
+    <template id="trustedTemplate">
+      <article class="brand-card compact-card">
+        <div>
+          <h3></h3>
+          <p>Trusted domains bypass risk warnings for that hostname and its subdomains.</p>
         </div>
         <button class="remove quiet" type="button">Remove</button>
       </article>

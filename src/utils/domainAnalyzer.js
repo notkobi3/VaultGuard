@@ -48,12 +48,51 @@ const SUSPICIOUS_KEYWORDS = [
   "verification",
   "support",
   "account",
-  "wallet"
+  "wallet",
+  "signin",
+  "password",
+  "reset",
+  "unlock",
+  "billing",
+  "payment",
+  "invoice",
+  "mfa",
+  "2fa",
+  "oauth",
+  "sso"
 ];
 
 const SUBSTITUTIONS = [
   { character: "0", possibleLetters: ["o"] },
-  { character: "1", possibleLetters: ["l", "i"] }
+  { character: "1", possibleLetters: ["l", "i"] },
+  { character: "3", possibleLetters: ["e"] },
+  { character: "4", possibleLetters: ["a"] },
+  { character: "5", possibleLetters: ["s"] },
+  { character: "7", possibleLetters: ["t"] },
+  { character: "8", possibleLetters: ["b"] },
+  { character: "rn", possibleLetters: ["m"] },
+  { character: "vv", possibleLetters: ["w"] }
+];
+
+const COMMON_SECOND_LEVEL_SUFFIXES = [
+  "ac",
+  "co",
+  "com",
+  "edu",
+  "gov",
+  "net",
+  "org"
+];
+
+const COMMON_COUNTRY_SUFFIXES = [
+  "au",
+  "br",
+  "in",
+  "jp",
+  "mx",
+  "nz",
+  "uk",
+  "za"
 ];
 
 function normalizeHostname(hostname) {
@@ -73,6 +112,17 @@ function getRegistrableDomain(hostname) {
 
   if (parts.length <= 2) {
     return cleanHostname;
+  }
+
+  const secondLevel = parts.at(-2);
+  const topLevel = parts.at(-1);
+
+  if (
+    parts.length >= 3 &&
+    COMMON_SECOND_LEVEL_SUFFIXES.includes(secondLevel) &&
+    COMMON_COUNTRY_SUFFIXES.includes(topLevel)
+  ) {
+    return parts.slice(-3).join(".");
   }
 
   return parts.slice(-2).join(".");
@@ -97,6 +147,12 @@ function normalizeProtectedBrands(protectedBrands = PROTECTED_BRANDS) {
       ? brand.domains.map(normalizeHostname).filter(Boolean)
       : []
   }));
+}
+
+function normalizeTrustedDomains(trustedDomains = []) {
+  return trustedDomains
+    .map(normalizeHostname)
+    .filter(Boolean);
 }
 
 function hasAllowedDomain(hostname, allowedDomain) {
@@ -138,6 +194,10 @@ function createSubstitutionVariants(value) {
 
 function containsSubstitution(value) {
   return SUBSTITUTIONS.some(({ character }) => value.includes(character));
+}
+
+function containsRepeatedHyphens(value) {
+  return value.includes("--");
 }
 
 function containsPunycodeLabel(hostname) {
@@ -222,6 +282,7 @@ function finalizeResult(result) {
 
 export function analyzeDomain(hostname, options = {}) {
   const protectedBrands = normalizeProtectedBrands(options.protectedBrands);
+  const trustedDomains = normalizeTrustedDomains(options.trustedDomains);
   const normalizedHostname = normalizeHostname(hostname);
   const registrableDomain = getRegistrableDomain(normalizedHostname);
   const domainLabel = getDomainLabel(normalizedHostname);
@@ -237,6 +298,14 @@ export function analyzeDomain(hostname, options = {}) {
 
   if (!normalizedHostname) {
     addReason(result, 20, "No hostname was available to analyze");
+    return finalizeResult(result);
+  }
+
+  const matchedTrustedDomain = trustedDomains.find((domain) => hasAllowedDomain(normalizedHostname, domain));
+
+  if (matchedTrustedDomain) {
+    result.trusted = true;
+    result.reasons.push(`Matched trusted domain "${matchedTrustedDomain}"`);
     return finalizeResult(result);
   }
 
@@ -302,8 +371,12 @@ export function analyzeDomain(hostname, options = {}) {
     addReason(result, 10, "Uses hyphens in the main domain name");
   }
 
+  if (containsRepeatedHyphens(domainLabel)) {
+    addReason(result, 15, "Uses repeated hyphens in the main domain name");
+  }
+
   if (containsSubstitution(domainLabel)) {
-    addReason(result, 20, "Contains character substitution such as 0 for o or 1 for l/i");
+    addReason(result, 20, "Contains character substitution such as 0 for o, 1 for l/i, or rn for m");
   }
 
   if (normalizedHostname.split(".").length > 3) {

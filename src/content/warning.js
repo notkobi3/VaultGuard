@@ -33,7 +33,13 @@
       chrome.runtime.sendMessage({ type: "VAULTGUARD_OPEN_OPTIONS" });
     });
 
-    dismissButton.addEventListener("click", removeExistingBanner);
+    dismissButton.addEventListener("click", () => {
+      chrome.runtime.sendMessage({
+        type: "VAULTGUARD_DISMISS_HOSTNAME",
+        hostname: analysis.hostname
+      });
+      removeExistingBanner();
+    });
 
     message.append(title, details);
     banner.append(message, optionsButton, dismissButton);

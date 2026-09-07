@@ -2,11 +2,11 @@
 
 VaultGuard is an educational Chrome extension that helps identify phishing-style domain names for banking, cryptocurrency, wallet, and financial-service websites.
 
-VaultGuard v0.4 analyzes website hostnames locally and explains why a domain looks safe, suspicious, or high risk.
+VaultGuard v0.7 analyzes website hostnames locally and explains why a domain looks safe, suspicious, or high risk.
 
 ## Educational Prototype Warning
 
-VaultGuard v0.4 is a learning project and should not be treated as a complete financial-security product. It can identify some obvious domain imitation patterns, but it cannot prove that a website is safe.
+VaultGuard v0.7 is a learning project and should not be treated as a complete financial-security product. It can identify many obvious domain imitation patterns, but it cannot prove that a website is safe.
 
 ## Current Features
 
@@ -19,6 +19,11 @@ VaultGuard v0.4 is a learning project and should not be treated as a complete fi
 - Protected-brand import and export from the options page.
 - Optional auto-scan setting for automatic badge updates while browsing.
 - Optional high-risk warning banner for pages that look like brand-imitation phishing attempts.
+- Trusted-domain list for known-safe false positives.
+- Hostname-only recent check history with local clear controls.
+- Temporary hostname warning dismissals.
+- Company presets for crypto, finance, and cloud development teams.
+- Full policy export and import for repeat customer setups.
 - Duplicate reason handling to avoid repeated identical warnings.
 - Extension badge status after popup analysis:
   - `OK`: Safe
@@ -26,6 +31,8 @@ VaultGuard v0.4 is a learning project and should not be treated as a complete fi
   - `!!`: High Risk
 - Punycode and internationalized-domain-name warning signals.
 - Deceptive protected-domain checks such as `paypal.com.example.net`.
+- Expanded suspicious keyword and character-substitution detection.
+- Basic multi-part suffix handling for common domains such as `.co.uk`.
 - Explainable risk scoring:
   - 0-20: Safe
   - 21-50: Suspicious
@@ -68,6 +75,14 @@ vaultguard/
     icon-128.svg
   docs/
     architecture.md
+    legal/
+      README.md
+      privacy-policy.md
+      terms-of-service.md
+      security-overview.md
+      permissions.md
+      vulnerability-disclosure.md
+      update-checklist.md
 ```
 
 ## Component Flow
@@ -79,7 +94,7 @@ User clicks extension icon
 Chrome opens src/popup/popup.html
         |
         v
-popup.js asks Chrome for active tab URL and local brand settings
+popup.js asks Chrome for active tab URL and local settings
         |
         v
 popup.js extracts only the hostname
@@ -92,6 +107,9 @@ Popup displays the risk level and reasons
         |
         v
 Chrome toolbar badge updates to OK, !, or !!
+        |
+        v
+Hostname-only history updates locally when enabled
 ```
 
 When auto-scan is enabled:
@@ -114,20 +132,20 @@ High-risk pages can receive an on-page warning banner
 
 ## Security Philosophy
 
-VaultGuard v0.4 follows a privacy-first design:
+VaultGuard v0.7 follows a privacy-first design:
 
 - Analysis happens locally in the browser.
 - Manual checks read the current tab URL when the user opens the popup.
 - Auto-scan is optional and is off by default.
 - When auto-scan is enabled, VaultGuard can check hostnames as pages load.
-- Custom protected brands are stored with `chrome.storage.local`.
+- Custom protected brands, trusted domains, settings, dismissed warnings, and hostname-only history are stored with `chrome.storage.local`.
 - The extension does not send data to any server.
 - The extension does not read passwords, form fields, transactions, private keys, or page account data.
 - The warning banner only appears on high-risk hostnames when the setting is enabled.
 
 ## What VaultGuard Never Collects
 
-VaultGuard v0.4 does not collect:
+VaultGuard v0.7 does not collect:
 
 - Passwords
 - Banking credentials
@@ -146,15 +164,15 @@ What it allows: after the user interacts with the extension, Chrome lets VaultGu
 
 Why VaultGuard needs it: the popup needs the current tab URL so it can extract and analyze the hostname.
 
-Security/privacy risk: URLs can reveal browsing context. VaultGuard reduces this risk by using the URL only inside the popup, extracting the hostname, not storing browsing history, and not sending it anywhere.
+Security/privacy risk: URLs can reveal browsing context. VaultGuard reduces this risk by extracting the hostname, storing only hostname-level recent checks when history is enabled, and not sending browsing data anywhere.
 
 ### `storage`
 
 What it allows: VaultGuard can save extension settings locally in Chrome.
 
-Why VaultGuard needs it: the options page lets the user edit the protected-brand list.
+Why VaultGuard needs it: the options page lets the user edit protected brands, trusted domains, presets, auto-scan, warning banners, and local history settings.
 
-Security/privacy risk: stored settings persist on the device. VaultGuard stores brand names, aliases, and legitimate domains only. Do not enter secrets in the options page.
+Security/privacy risk: stored settings persist on the device. VaultGuard stores brand names, aliases, legitimate domains, trusted domains, dismissed hostnames, and hostname-only history only. Do not enter secrets in the options page.
 
 ### `tabs`
 
@@ -213,7 +231,9 @@ Update the legal and trust documents whenever VaultGuard changes permissions, st
 3. Click `Details`.
 4. Click `Extension options`.
 5. Add, remove, import, export, or restore protected brands.
-6. Turn auto-scan and the high-risk banner on or off.
+6. Add trusted domains for known-safe false positives.
+7. Load a company preset or export a full policy file for another setup.
+8. Turn auto-scan, history, and the high-risk banner on or off.
 
 Only store brand names, aliases, and legitimate domains.
 
@@ -225,7 +245,7 @@ From inside the `vaultguard` folder:
 npm test
 ```
 
-The tests verify that known legitimate domains have a Safe risk score and phishing-like examples produce suspicious or high-risk scores. They also check custom brands, duplicate reason handling, and internal-result cleanup.
+The tests verify that known legitimate domains have a Safe risk score and phishing-like examples produce suspicious or high-risk scores. They also check custom brands, trusted domains, multi-part suffix handling, duplicate reason handling, and internal-result cleanup.
 
 ## Manual Test Ideas
 
@@ -236,14 +256,17 @@ The tests verify that known legitimate domains have a Safe risk score and phishi
 - Try `https://paypal.com.example.net` and confirm deceptive protected-domain detection appears.
 - Try an IDN/punycode hostname and confirm the popup warns about punycode.
 - Open the options page and add a custom protected brand.
+- Add a trusted domain and confirm it bypasses warnings for that hostname.
+- Load each company preset and export a policy file.
+- Open the popup and confirm recent hostname checks appear.
 - Enable auto-scan, visit a risky test hostname, and confirm the badge updates automatically.
 - Enable the warning banner and confirm High Risk hostnames show a top-of-page warning.
 - Open `chrome://extensions` and confirm VaultGuard handles Chrome internal pages gracefully.
 
-## Recommended v0.5 Tasks
+## Recommended v0.8 Tasks
 
-1. Add better public-suffix handling for domains like `.co.uk`.
-2. Add a suspicious-domain history page that stores hostnames only.
-3. Add a trusted-domains list for false positives.
-4. Add a temporary dismiss list so users can hide warnings for a single hostname.
-5. Add screenshots and a Chrome Web Store readiness checklist.
+1. Add a dedicated history page with filters and retention settings.
+2. Add screenshots and a Chrome Web Store readiness checklist.
+3. Add enterprise install notes for managed Chrome environments.
+4. Add optional remote reputation checks only after a privacy and legal review.
+5. Add a polished first-run onboarding page.

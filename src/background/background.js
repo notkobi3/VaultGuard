@@ -2,10 +2,15 @@ import { analyzeDomain } from "../utils/domainAnalyzer.js";
 
 const BRAND_STORAGE_KEY = "vaultguardProtectedBrands";
 const SETTINGS_STORAGE_KEY = "vaultguardSettings";
+const TRUSTED_STORAGE_KEY = "vaultguardTrustedDomains";
+const HISTORY_STORAGE_KEY = "vaultguardHistory";
+const DISMISS_STORAGE_KEY = "vaultguardDismissedWarnings";
 const DEFAULT_SETTINGS = {
   autoScanEnabled: false,
-  warningBannerEnabled: true
+  warningBannerEnabled: true,
+  historyEnabled: true
 };
+const MAX_HISTORY_ITEMS = 25;
 
 function getBadgeForLevel(level) {
   if (level === "High Risk") {
@@ -24,10 +29,19 @@ function canAnalyzeUrl(url) {
 }
 
 async function getSettings() {
-  const saved = await chrome.storage.local.get([BRAND_STORAGE_KEY, SETTINGS_STORAGE_KEY]);
+  const saved = await chrome.storage.local.get([
+    BRAND_STORAGE_KEY,
+    SETTINGS_STORAGE_KEY,
+    TRUSTED_STORAGE_KEY,
+    HISTORY_STORAGE_KEY,
+    DISMISS_STORAGE_KEY
+  ]);
 
   return {
     protectedBrands: saved[BRAND_STORAGE_KEY],
+    trustedDomains: saved[TRUSTED_STORAGE_KEY] || [],
+    history: saved[HISTORY_STORAGE_KEY] || [],
+    dismissedWarnings: saved[DISMISS_STORAGE_KEY] || {},
     settings: {
       ...DEFAULT_SETTINGS,
       ...(saved[SETTINGS_STORAGE_KEY] || {})
@@ -44,6 +58,24 @@ async function updateTabBadge(tabId, analysis) {
 
   await chrome.action.setBadgeText({ tabId, text: badge.text });
   await chrome.action.setBadgeBackgroundColor({ tabId, color: badge.color });
+}
+
+function createHistoryItem(analysis) {
+  return {
+    hostname: analysis.hostname,
+    level: analysis.level,
+    score: analysis.score,
+    checkedAt: new Date().toISOString()
+  };
+}
+
+async function saveHistory(history, analysis) {
+  const nextHistory = [
+    createHistoryItem(analysis),
+    ...history.filter((item) => item.hostname !== analysis.hostname)
+  ].slice(0, MAX_HISTORY_ITEMS);
+
+  await chrome.storage.local.set({ [HISTORY_STORAGE_KEY]: nextHistory });
 }
 
 async function showWarningBanner(tabId, analysis) {
@@ -120,7 +152,7 @@ async function clearWarningBanner(tabId) {
 }
 
 async function scanTab(tabId, url) {
-  const { protectedBrands, settings } = await getSettings();
+  const { protectedBrands, trustedDomains, history, dismissedWarnings, settings } = await getSettings();
 
   if (!settings.autoScanEnabled) {
     await clearTabBadge(tabId);
@@ -136,10 +168,14 @@ async function scanTab(tabId, url) {
   }
 
   const hostname = new URL(url).hostname;
-  const analysis = analyzeDomain(hostname, { protectedBrands });
+  const analysis = analyzeDomain(hostname, { protectedBrands, trustedDomains });
   await updateTabBadge(tabId, analysis);
 
-  if (settings.warningBannerEnabled && analysis.level === "High Risk") {
+  if (settings.historyEnabled) {
+    await saveHistory(history, analysis);
+  }
+
+  if (settings.warningBannerEnabled && analysis.level === "High Risk" && !dismissedWarnings[analysis.hostname]) {
     await showWarningBanner(tabId, analysis);
   } else {
     await clearWarningBanner(tabId);
@@ -173,7 +209,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
 chrome.storage.onChanged.addListener((changes, areaName) => {
-  if (areaName !== "local" || (!changes[SETTINGS_STORAGE_KEY] && !changes[BRAND_STORAGE_KEY])) {
+  if (
+    areaName !== "local" ||
+    (!changes[SETTINGS_STORAGE_KEY] && !changes[BRAND_STORAGE_KEY] && !changes[TRUSTED_STORAGE_KEY])
+  ) {
     return;
   }
 
@@ -183,5 +222,16 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
 chrome.runtime.onMessage.addListener((message) => {
   if (message?.type === "VAULTGUARD_OPEN_OPTIONS") {
     chrome.runtime.openOptionsPage();
+  }
+
+  if (message?.type === "VAULTGUARD_DISMISS_HOSTNAME" && message.hostname) {
+    chrome.storage.local.get(DISMISS_STORAGE_KEY).then((saved) => {
+      chrome.storage.local.set({
+        [DISMISS_STORAGE_KEY]: {
+          ...(saved[DISMISS_STORAGE_KEY] || {}),
+          [message.hostname]: new Date().toISOString()
+        }
+      });
+    });
   }
 });
