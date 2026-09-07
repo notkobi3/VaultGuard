@@ -1,11 +1,17 @@
 import { analyzeDomain } from "../utils/domainAnalyzer.js";
 
 const STORAGE_KEY = "vaultguardProtectedBrands";
+const SETTINGS_KEY = "vaultguardSettings";
+const DEFAULT_SETTINGS = {
+  autoScanEnabled: false,
+  warningBannerEnabled: true
+};
 const hostnameElement = document.querySelector("#hostname");
 const riskLevelElement = document.querySelector("#risk-level");
 const summaryElement = document.querySelector("#summary");
 const reasonsElement = document.querySelector("#reasons");
 const openOptionsButton = document.querySelector("#open-options");
+const autoScanStatusElement = document.querySelector("#auto-scan-status");
 
 function setRiskClass(level) {
   riskLevelElement.className = "risk";
@@ -47,8 +53,15 @@ function renderError(message) {
 }
 
 async function getProtectedBrands() {
-  const saved = await chrome.storage.local.get(STORAGE_KEY);
-  return saved[STORAGE_KEY];
+  const saved = await chrome.storage.local.get([STORAGE_KEY, SETTINGS_KEY]);
+
+  return {
+    protectedBrands: saved[STORAGE_KEY],
+    settings: {
+      ...DEFAULT_SETTINGS,
+      ...(saved[SETTINGS_KEY] || {})
+    }
+  };
 }
 
 async function updateBadge(analysis) {
@@ -78,8 +91,11 @@ async function getActiveTabHostname() {
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     const hostname = await getActiveTabHostname();
-    const protectedBrands = await getProtectedBrands();
+    const { protectedBrands, settings } = await getProtectedBrands();
     const analysis = analyzeDomain(hostname, { protectedBrands });
+    autoScanStatusElement.textContent = settings.autoScanEnabled
+      ? "Auto-scan: On"
+      : "Auto-scan: Off";
     renderAnalysis(analysis);
     await updateBadge(analysis);
   } catch (error) {

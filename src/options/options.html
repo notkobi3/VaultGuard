@@ -18,6 +18,27 @@
         Do not enter passwords, seed phrases, private keys, recovery codes, bank details, or API keys here.
       </section>
 
+      <section class="editor protection-settings">
+        <div>
+          <h2>Browsing Protection</h2>
+          <p>Auto-scan checks site hostnames while browsing and updates the toolbar badge without opening the popup.</p>
+        </div>
+        <label class="toggle-row">
+          <input id="autoScanEnabled" type="checkbox">
+          <span>
+            <strong>Auto-scan websites</strong>
+            <small>Optional. Requires website access so VaultGuard can check pages as they load.</small>
+          </span>
+        </label>
+        <label class="toggle-row">
+          <input id="warningBannerEnabled" type="checkbox">
+          <span>
+            <strong>Show high-risk warning banner</strong>
+            <small>Shows an on-page warning when auto-scan finds a high-risk hostname.</small>
+          </span>
+        </label>
+      </section>
+
       <section class="editor-grid">
         <form id="brandForm" class="editor" autocomplete="off">
           <h2>Add Brand</h2>

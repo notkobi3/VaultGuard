@@ -1,6 +1,11 @@
 import { PROTECTED_BRANDS } from "../utils/domainAnalyzer.js";
 
 const STORAGE_KEY = "vaultguardProtectedBrands";
+const SETTINGS_KEY = "vaultguardSettings";
+const DEFAULT_SETTINGS = {
+  autoScanEnabled: false,
+  warningBannerEnabled: true
+};
 const brandForm = document.querySelector("#brandForm");
 const brandName = document.querySelector("#brandName");
 const brandAliases = document.querySelector("#brandAliases");
@@ -12,8 +17,11 @@ const importBrands = document.querySelector("#importBrands");
 const importFile = document.querySelector("#importFile");
 const resetBrands = document.querySelector("#resetBrands");
 const status = document.querySelector("#status");
+const autoScanEnabled = document.querySelector("#autoScanEnabled");
+const warningBannerEnabled = document.querySelector("#warningBannerEnabled");
 
 let brands = [];
+let settings = { ...DEFAULT_SETTINGS };
 
 function setStatus(message) {
   status.textContent = message;
@@ -68,6 +76,17 @@ async function saveBrands(message = "Protected brand list saved locally.") {
   setStatus(message);
 }
 
+async function saveSettings(message = "Browsing protection settings saved locally.") {
+  await chrome.storage.local.set({ [SETTINGS_KEY]: settings });
+  setStatus(message);
+}
+
+function renderSettings() {
+  autoScanEnabled.checked = Boolean(settings.autoScanEnabled);
+  warningBannerEnabled.checked = Boolean(settings.warningBannerEnabled);
+  warningBannerEnabled.disabled = !settings.autoScanEnabled;
+}
+
 function renderBrands() {
   brandCards.textContent = "";
 
@@ -95,9 +114,14 @@ function renderBrands() {
 }
 
 async function loadBrands() {
-  const saved = await chrome.storage.local.get(STORAGE_KEY);
+  const saved = await chrome.storage.local.get([STORAGE_KEY, SETTINGS_KEY]);
   brands = validateBrands(saved[STORAGE_KEY] || PROTECTED_BRANDS);
+  settings = {
+    ...DEFAULT_SETTINGS,
+    ...(saved[SETTINGS_KEY] || {})
+  };
   renderBrands();
+  renderSettings();
 }
 
 function downloadBrands() {
@@ -165,6 +189,16 @@ resetBrands.addEventListener("click", async () => {
   brands = validateBrands(PROTECTED_BRANDS);
   renderBrands();
   await saveBrands("Default protected brand list restored.");
+});
+autoScanEnabled.addEventListener("change", async () => {
+  settings.autoScanEnabled = autoScanEnabled.checked;
+  renderSettings();
+  await saveSettings(settings.autoScanEnabled ? "Auto-scan enabled." : "Auto-scan disabled.");
+});
+warningBannerEnabled.addEventListener("change", async () => {
+  settings.warningBannerEnabled = warningBannerEnabled.checked;
+  renderSettings();
+  await saveSettings(settings.warningBannerEnabled ? "High-risk warning banner enabled." : "High-risk warning banner disabled.");
 });
 
 loadBrands();

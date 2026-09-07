@@ -1,9 +1,9 @@
-# VaultGuard v0.3 Architecture
+# VaultGuard v0.4 Architecture
 
 ```text
 manifest.json
   |
-  | declares popup, options page, icons, activeTab, and storage
+  | declares popup, options page, background worker, icons, and permissions
   v
 src/popup/popup.html
   |
@@ -12,7 +12,7 @@ src/popup/popup.html
 src/popup/popup.js
   |
   | uses chrome.tabs.query after the user opens the popup
-  | uses chrome.storage.local to read protected-brand settings
+  | uses chrome.storage.local to read protected-brand and auto-scan settings
   v
 Current active tab URL
   |
@@ -25,38 +25,75 @@ src/utils/domainAnalyzer.js
 Popup UI and extension badge
 ```
 
+## Optional Auto-Scan Flow
+
+```text
+Chrome tab is activated or updated
+  |
+  v
+src/background/background.js
+  |
+  | checks whether auto-scan is enabled
+  | extracts hostname from http/https URLs
+  | reads protected-brand settings
+  v
+src/utils/domainAnalyzer.js
+  |
+  v
+Per-tab badge status
+  |
+  | High Risk plus banner setting enabled
+  v
+src/content/warning.js
+  |
+  v
+Top-of-page warning banner
+```
+
+Auto-scan is off by default. When it is off, the background worker clears per-tab badge text and does not analyze browsing activity.
+
 ## Options Page
 
 ```text
 src/options/options.html
   |
-  | lets the user edit protected brand JSON
+  | lets the user edit protected brands and browsing protection settings
   v
 chrome.storage.local
   |
-  | stores brand names, aliases, and legitimate domains
+  | stores brand names, aliases, legitimate domains, auto-scan state, and banner state
   v
-popup.js
+popup.js and background.js
 ```
 
 The options page stores detection settings only. It supports adding, removing, importing, exporting, and restoring protected brands. It should never contain passwords, banking details, recovery codes, API keys, seed phrases, or private keys.
 
-## Why There Is No Content Script Yet
+## Content Script Scope
 
-A content script runs inside matching web pages and can inspect or change page content. VaultGuard v0.3 does not need that power because it only analyzes the active tab hostname when the popup opens.
+VaultGuard v0.4 uses a content script only for the high-risk warning banner. The extension does not inspect forms, read page text, collect credentials, or modify transactions.
 
-Skipping a content script keeps the extension simpler and more private.
+The warning banner is injected by the background worker after local hostname analysis returns `High Risk` and the user has the warning-banner setting enabled.
 
-## Why There Is No Background Service Worker Yet
+## Background Service Worker Scope
 
-A Manifest V3 service worker runs in the background for extension events. VaultGuard v0.3 updates the badge when the popup runs, so it does not need continuous background work.
+The Manifest V3 service worker listens for tab activation, tab updates, and local setting changes.
 
-If VaultGuard later adds automatic navigation warnings or badge checks before the popup opens, a service worker may become useful. That would require a fresh permission review.
+Its job is deliberately small:
+
+- Check whether auto-scan is enabled.
+- Extract hostnames from `http` and `https` tab URLs.
+- Run local domain analysis.
+- Update the per-tab badge.
+- Inject a warning banner only on High Risk hostnames when enabled.
 
 ## Permission Choices
 
-VaultGuard v0.3 uses `activeTab` so the popup can read the current tab URL after a user action.
+VaultGuard v0.4 uses `activeTab` so the popup can read the current tab URL after a user action.
 
-VaultGuard v0.3 uses `storage` so the options page can save the protected-brand list locally.
+VaultGuard v0.4 uses `storage` so the options page can save protected-brand and browsing-protection settings locally.
 
-It does not request broad host permissions like `<all_urls>`, because v0.3 does not need ongoing access to every website the user visits.
+VaultGuard v0.4 uses `tabs` so optional auto-scan can react to tab URL changes before the popup opens.
+
+VaultGuard v0.4 uses `scripting` and `http/https` host permissions so it can place a warning banner onto high-risk pages.
+
+These permissions are broader than v0.3 because automatic scanning and page warnings require them in Chrome. The privacy boundary remains: analysis is local, secrets are never requested, page contents are not analyzed, and no data is sent to a server.

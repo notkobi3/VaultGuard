@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "VaultGuard",
   "description": "Educational phishing-risk detector for financial and cryptocurrency domains.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "icons": {
     "16": "assets/icon-16.png",
     "32": "assets/icon-32.png",
@@ -23,8 +23,18 @@
     "page": "src/options/options.html",
     "open_in_tab": true
   },
+  "background": {
+    "service_worker": "src/background/background.js",
+    "type": "module"
+  },
   "permissions": [
     "activeTab",
-    "storage"
+    "storage",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
   ]
 }

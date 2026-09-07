@@ -43,6 +43,12 @@ h1 {
   color: #42526b;
 }
 
+.status.muted {
+  margin-top: 3px;
+  color: #64748b;
+  font-size: 13px;
+}
+
 .analysis-panel {
   padding-top: 14px;
 }
