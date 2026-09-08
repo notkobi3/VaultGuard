@@ -247,6 +247,8 @@ Release history is tracked in `CHANGELOG.md`.
 
 ## Install Locally in Chrome Developer Mode
 
+For non-technical private pilot testers, use `PILOT-INSTALL.md`.
+
 1. Open Chrome.
 2. Go to `chrome://extensions`.
 3. Turn on `Developer mode`.
