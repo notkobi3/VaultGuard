@@ -1,5 +1,14 @@
 # VaultGuard Timeline
 
+## v1.4.1 - Google Form Feedback Setup
+
+Focus: make private pilot feedback easier to collect from businesses.
+
+- Add a configurable feedback form URL in settings.
+- Send the popup `Report Feedback` action to the saved Google Form when configured.
+- Keep the local email feedback page as a fallback.
+- Add Google Form setup documentation for pilot testers.
+
 ## v1.4.0 - Pilot Readiness
 
 Focus: make VaultGuard easier and safer to hand to real businesses for private pilot feedback.

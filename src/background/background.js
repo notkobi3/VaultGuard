@@ -9,7 +9,8 @@ const DEFAULT_SETTINGS = {
   autoScanEnabled: false,
   warningBannerEnabled: true,
   historyEnabled: true,
-  historyLimit: 100
+  historyLimit: 100,
+  feedbackFormUrl: ""
 };
 
 function getHistoryLimit(settings) {
@@ -200,6 +201,38 @@ async function scanActiveTab() {
   }
 }
 
+function getSafeFeedbackFormUrl(value) {
+  const trimmedValue = String(value || "").trim();
+
+  if (!trimmedValue) {
+    return "";
+  }
+
+  try {
+    const parsedUrl = new URL(trimmedValue);
+    return parsedUrl.protocol === "https:" ? parsedUrl.href : "";
+  } catch {
+    return "";
+  }
+}
+
+async function openFeedback(message) {
+  const saved = await chrome.storage.local.get(SETTINGS_STORAGE_KEY);
+  const settings = {
+    ...DEFAULT_SETTINGS,
+    ...(saved[SETTINGS_STORAGE_KEY] || {})
+  };
+  const externalFeedbackUrl = getSafeFeedbackFormUrl(settings.feedbackFormUrl);
+
+  if (externalFeedbackUrl) {
+    chrome.tabs.create({ url: externalFeedbackUrl });
+    return;
+  }
+
+  const query = message.hostname ? `?domain=${encodeURIComponent(message.hostname)}` : "";
+  chrome.tabs.create({ url: chrome.runtime.getURL(`src/feedback/feedback.html${query}`) });
+}
+
 chrome.tabs.onActivated.addListener(({ tabId }) => {
   chrome.tabs.get(tabId, (tab) => {
     if (chrome.runtime.lastError) {
@@ -250,8 +283,10 @@ chrome.runtime.onMessage.addListener((message) => {
   }
 
   if (message?.type === "VAULTGUARD_OPEN_FEEDBACK") {
-    const query = message.hostname ? `?domain=${encodeURIComponent(message.hostname)}` : "";
-    chrome.tabs.create({ url: chrome.runtime.getURL(`src/feedback/feedback.html${query}`) });
+    openFeedback(message).catch(() => {
+      const query = message.hostname ? `?domain=${encodeURIComponent(message.hostname)}` : "";
+      chrome.tabs.create({ url: chrome.runtime.getURL(`src/feedback/feedback.html${query}`) });
+    });
   }
 });
 

@@ -2,11 +2,11 @@
 
 VaultGuard is an educational Chrome extension that helps identify phishing-style domain names for banking, cryptocurrency, wallet, and financial-service websites.
 
-VaultGuard v1.4.0 analyzes website hostnames locally and explains why a domain looks trusted, safe, needs review, or high risk.
+VaultGuard v1.4.1 analyzes website hostnames locally and explains why a domain looks trusted, safe, needs review, or high risk.
 
 ## Educational Prototype Warning
 
-VaultGuard v1.4.0 is a release-candidate learning project and should not be treated as a complete financial-security product. It can identify many obvious domain imitation patterns, but it cannot prove that a website is safe.
+VaultGuard v1.4.1 is a release-candidate learning project and should not be treated as a complete financial-security product. It can identify many obvious domain imitation patterns, but it cannot prove that a website is safe.
 
 ## Current Features
 
@@ -29,6 +29,7 @@ VaultGuard v1.4.0 is a release-candidate learning project and should not be trea
 - Full policy export and import for repeat customer setups.
 - First-run onboarding page.
 - Chrome Web Store listing draft, release checklist, and enterprise install notes.
+- Configurable pilot feedback form link with a local email feedback fallback.
 - Duplicate reason handling to avoid repeated identical warnings.
 - Extension badge status after popup analysis:
   - `TR`: Trusted
@@ -106,6 +107,7 @@ vaultguard/
       enterprise-install.md
     pilot/
       pilot-email-template.md
+      google-form-feedback.md
       known-limitations.md
   CHANGELOG.md
 ```
@@ -157,7 +159,7 @@ High-risk pages can receive an on-page warning banner
 
 ## Security Philosophy
 
-VaultGuard v1.4.0 follows a privacy-first design:
+VaultGuard v1.4.1 follows a privacy-first design:
 
 - Analysis happens locally in the browser.
 - Manual checks read the current tab URL when the user opens the popup.
@@ -170,7 +172,7 @@ VaultGuard v1.4.0 follows a privacy-first design:
 
 ## What VaultGuard Never Collects
 
-VaultGuard v1.4.0 does not collect:
+VaultGuard v1.4.1 does not collect:
 
 - Passwords
 - Banking credentials
@@ -253,9 +255,10 @@ Release history is tracked in `CHANGELOG.md`.
 Private pilot documents live in `docs/pilot/`:
 
 - `pilot-email-template.md`
+- `google-form-feedback.md`
 - `known-limitations.md`
 
-The popup also includes a `Report Feedback` button that opens a local email draft for missed domains, false positives, confusing warnings, and setup issues.
+The popup also includes a `Report Feedback` button that opens a saved pilot feedback form link when configured, or a local email draft fallback for missed domains, false positives, confusing warnings, and setup issues.
 
 ## Install Locally in Chrome Developer Mode
 
@@ -282,7 +285,8 @@ After updating local files, open `chrome://extensions` and click Reload on Vault
 5. Add, remove, import, export, or restore protected brands.
 6. Add trusted domains for known-safe false positives.
 7. Load a company preset or export a full policy file for another setup.
-8. Turn auto-scan, history, history retention, and the high-risk banner on or off.
+8. Add a pilot feedback form URL if you want the popup feedback button to open a Google Form.
+9. Turn auto-scan, history, history retention, and the high-risk banner on or off.
 
 Only store brand names, aliases, and legitimate domains.
 

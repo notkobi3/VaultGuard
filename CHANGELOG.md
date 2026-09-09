@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.4.1 - Google Form Feedback Setup
+
+- Added a configurable pilot feedback form URL in settings.
+- Updated the `Report Feedback` button to open the saved feedback form link when one is configured.
+- Kept the local email feedback page as a fallback when no form link is saved.
+- Added Google Form setup guidance for private pilots.
+
 ## 1.4.0 - Pilot Readiness
 
 - Added a `Report Feedback` button in the popup.

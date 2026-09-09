@@ -56,7 +56,7 @@ If future versions add accounts, cloud sync, analytics, team dashboards, or thir
 
 ## Pilot Feedback
 
-VaultGuard v1.4 can open an email draft when a user clicks `Report Feedback`. The user decides whether to send that email and what to include.
+VaultGuard v1.4 can open a configured external feedback form, such as a Google Form, when a user clicks `Report Feedback`. If no form is configured, VaultGuard opens a local email draft instead. The user decides whether to submit the form or send the email and what to include.
 
 Pilot feedback may include information the user types, such as a hostname, expected result, actual result, company/team name, and notes. Users should not include passwords, recovery codes, private keys, seed phrases, banking details, API keys, customer data, or other sensitive information.
 

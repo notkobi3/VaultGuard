@@ -11,7 +11,7 @@ Use Google Chrome on a desktop or laptop.
 The pilot ZIP should be named something like:
 
 ```text
-vaultguard-pilot-1.4.0.zip
+vaultguard-pilot-1.4.1.zip
 ```
 
 ## Install VaultGuard
@@ -47,8 +47,9 @@ If your team extracted the pilot ZIP to a folder on the computer, you can also d
    - `Cloud Dev Team`
 4. Add important protected brands and domains your team uses.
 5. Add trusted domains only when your team has verified that the domain is legitimate.
-6. Keep auto-scan off at first if you want to test manually.
-7. Turn on auto-scan when you want VaultGuard to update the toolbar badge automatically as pages load.
+6. Add the pilot Google Form link in `Feedback form URL` if your pilot contact gave you one.
+7. Keep auto-scan off at first if you want to test manually.
+8. Turn on auto-scan when you want VaultGuard to update the toolbar badge automatically as pages load.
 
 ## Suggested Test Sites
 
@@ -86,6 +87,12 @@ Please check:
 - Was the history page useful?
 - Was the Report Feedback button easy to use?
 - Did anything feel confusing or too technical?
+
+## Submit Feedback
+
+Click `Report Feedback` in the VaultGuard popup when you are ready to share notes.
+
+If a feedback form URL is configured in Settings, VaultGuard opens that form. If no form link is configured, VaultGuard opens a local email draft instead.
 
 ## Pilot Feedback Questions
 

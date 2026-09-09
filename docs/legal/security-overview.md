@@ -70,7 +70,7 @@ VaultGuard v1.4 does not transmit data to a VaultGuard server.
 
 ## Pilot Feedback
 
-The pilot feedback form creates an email draft. It does not submit feedback automatically.
+The pilot feedback workflow opens a configured external feedback form when one is saved in settings. If no form is configured, it opens a local email draft. It does not submit feedback automatically.
 
 Users should review the email before sending it and should not include passwords, recovery codes, private keys, seed phrases, API keys, banking details, customer records, or other sensitive information.
 

@@ -8,7 +8,8 @@ const DEFAULT_SETTINGS = {
   autoScanEnabled: false,
   warningBannerEnabled: true,
   historyEnabled: true,
-  historyLimit: 100
+  historyLimit: 100,
+  feedbackFormUrl: ""
 };
 const POLICY_PRESETS = {
   crypto: {
@@ -73,6 +74,8 @@ const importPolicy = document.querySelector("#importPolicy");
 const clearDismissed = document.querySelector("#clearDismissed");
 const openOnboarding = document.querySelector("#openOnboarding");
 const presetButtons = document.querySelectorAll(".preset");
+const feedbackFormUrl = document.querySelector("#feedbackFormUrl");
+const saveFeedbackFormUrl = document.querySelector("#saveFeedbackFormUrl");
 
 let brands = [];
 let trustedDomains = [];
@@ -157,11 +160,28 @@ function validateTrustedDomains(value) {
   return [...new Set(value.map(String).map(normalizeDomain).filter(Boolean))];
 }
 
+function normalizeFeedbackFormUrl(value) {
+  const trimmedValue = String(value || "").trim();
+
+  if (!trimmedValue) {
+    return "";
+  }
+
+  const parsedUrl = new URL(trimmedValue);
+
+  if (parsedUrl.protocol !== "https:") {
+    throw new Error("Use an HTTPS Google Form link.");
+  }
+
+  return parsedUrl.href;
+}
+
 function renderSettings() {
   autoScanEnabled.checked = Boolean(settings.autoScanEnabled);
   warningBannerEnabled.checked = Boolean(settings.warningBannerEnabled);
   historyEnabled.checked = Boolean(settings.historyEnabled);
   historyLimit.value = String([25, 100, 500].includes(Number(settings.historyLimit)) ? settings.historyLimit : 100);
+  feedbackFormUrl.value = settings.feedbackFormUrl || "";
   warningBannerEnabled.disabled = !settings.autoScanEnabled;
   historyLimit.disabled = !settings.historyEnabled;
 }
@@ -270,7 +290,7 @@ function downloadBrands() {
 
 function downloadPolicy() {
   downloadJson("vaultguard-policy.json", {
-    version: "1.3.0",
+    version: "1.4.1",
     exportedAt: new Date().toISOString(),
     settings,
     protectedBrands: brands,
@@ -412,6 +432,15 @@ historyLimit.addEventListener("change", async () => {
   settings.historyLimit = Number(historyLimit.value);
   renderSettings();
   await saveSettings(`History retention set to the last ${settings.historyLimit} checks.`);
+});
+saveFeedbackFormUrl.addEventListener("click", async () => {
+  try {
+    settings.feedbackFormUrl = normalizeFeedbackFormUrl(feedbackFormUrl.value);
+    renderSettings();
+    await saveSettings(settings.feedbackFormUrl ? "Feedback form link saved." : "Feedback form link cleared. VaultGuard will use the email feedback page.");
+  } catch (error) {
+    setStatus(`Could not save feedback form: ${error.message}`);
+  }
 });
 clearDismissed.addEventListener("click", async () => {
   await chrome.storage.local.set({ [DISMISSED_KEY]: {} });
