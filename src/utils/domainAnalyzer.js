@@ -137,14 +137,39 @@ function compactDomainText(value) {
   return value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
 }
 
-function normalizeProtectedBrands(protectedBrands = PROTECTED_BRANDS) {
-  return protectedBrands.map((brand) => ({
+function mergeProtectedBrands(protectedBrands) {
+  const mergedBrands = new Map();
+
+  [...PROTECTED_BRANDS, ...(Array.isArray(protectedBrands) ? protectedBrands : [])].forEach((brand) => {
+    const name = String(brand.name || "").trim();
+
+    if (!name) {
+      return;
+    }
+
+    const key = compactDomainText(name);
+    const existingBrand = mergedBrands.get(key) || {
+      name,
+      aliases: [],
+      domains: []
+    };
+
+    existingBrand.aliases.push(...(Array.isArray(brand.aliases) ? brand.aliases : [name]));
+    existingBrand.domains.push(...(Array.isArray(brand.domains) ? brand.domains : []));
+    mergedBrands.set(key, existingBrand);
+  });
+
+  return [...mergedBrands.values()];
+}
+
+function normalizeProtectedBrands(protectedBrands) {
+  return mergeProtectedBrands(protectedBrands).map((brand) => ({
     name: brand.name,
     aliases: Array.isArray(brand.aliases) && brand.aliases.length > 0
-      ? brand.aliases.map(compactDomainText)
+      ? [...new Set(brand.aliases.map(compactDomainText).filter(Boolean))]
       : [compactDomainText(brand.name)],
     domains: Array.isArray(brand.domains)
-      ? brand.domains.map(normalizeHostname).filter(Boolean)
+      ? [...new Set(brand.domains.map(normalizeHostname).filter(Boolean))]
       : []
   }));
 }

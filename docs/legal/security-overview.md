@@ -6,7 +6,7 @@ This document explains VaultGuard's current security posture for users, reviewer
 
 ## Current Security Model
 
-VaultGuard v1.0 is a local-first Chrome extension. It analyzes website hostnames in the browser and displays a risk score, risk level, and explanation.
+VaultGuard v1.4 is a local-first Chrome extension. It analyzes website hostnames in the browser and displays a risk score, risk level, and explanation.
 
 The extension is designed to help users notice suspicious domains before trusting a website.
 
@@ -24,7 +24,7 @@ VaultGuard checks hostnames for signals such as:
 
 ## What VaultGuard Does Not Check
 
-VaultGuard v1.0 does not:
+VaultGuard v1.4 does not:
 
 - Read passwords.
 - Read form fields.
@@ -55,7 +55,7 @@ When a hostname is rated High Risk, VaultGuard can inject a top-of-page warning 
 
 ## Data Handling
 
-VaultGuard v1.0 stores only local settings in Chrome extension storage:
+VaultGuard v1.4 stores only local settings in Chrome extension storage:
 
 - Protected brands.
 - Brand aliases.
@@ -66,7 +66,13 @@ VaultGuard v1.0 stores only local settings in Chrome extension storage:
 - Hostname-only recent check history, if enabled.
 - Dismissed warning hostnames.
 
-VaultGuard v1.0 does not transmit data to a VaultGuard server.
+VaultGuard v1.4 does not transmit data to a VaultGuard server.
+
+## Pilot Feedback
+
+The pilot feedback form creates an email draft. It does not submit feedback automatically.
+
+Users should review the email before sending it and should not include passwords, recovery codes, private keys, seed phrases, API keys, banking details, customer records, or other sensitive information.
 
 ## Security Boundaries
 

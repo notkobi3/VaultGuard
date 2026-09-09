@@ -2,11 +2,11 @@
 
 VaultGuard is an educational Chrome extension that helps identify phishing-style domain names for banking, cryptocurrency, wallet, and financial-service websites.
 
-VaultGuard v1.3 analyzes website hostnames locally and explains why a domain looks trusted, safe, needs review, or high risk.
+VaultGuard v1.4.0 analyzes website hostnames locally and explains why a domain looks trusted, safe, needs review, or high risk.
 
 ## Educational Prototype Warning
 
-VaultGuard v1.3 is a release-candidate learning project and should not be treated as a complete financial-security product. It can identify many obvious domain imitation patterns, but it cannot prove that a website is safe.
+VaultGuard v1.4.0 is a release-candidate learning project and should not be treated as a complete financial-security product. It can identify many obvious domain imitation patterns, but it cannot prove that a website is safe.
 
 ## Current Features
 
@@ -104,6 +104,9 @@ vaultguard/
       chrome-web-store-checklist.md
       listing-copy.md
       enterprise-install.md
+    pilot/
+      pilot-email-template.md
+      known-limitations.md
   CHANGELOG.md
 ```
 
@@ -154,7 +157,7 @@ High-risk pages can receive an on-page warning banner
 
 ## Security Philosophy
 
-VaultGuard v1.3 follows a privacy-first design:
+VaultGuard v1.4.0 follows a privacy-first design:
 
 - Analysis happens locally in the browser.
 - Manual checks read the current tab URL when the user opens the popup.
@@ -167,7 +170,7 @@ VaultGuard v1.3 follows a privacy-first design:
 
 ## What VaultGuard Never Collects
 
-VaultGuard v1.3 does not collect:
+VaultGuard v1.4.0 does not collect:
 
 - Passwords
 - Banking credentials
@@ -245,6 +248,15 @@ Chrome Web Store and company-readiness drafts live in `docs/store/`:
 
 Release history is tracked in `CHANGELOG.md`.
 
+## Pilot Documents
+
+Private pilot documents live in `docs/pilot/`:
+
+- `pilot-email-template.md`
+- `known-limitations.md`
+
+The popup also includes a `Report Feedback` button that opens a local email draft for missed domains, false positives, confusing warnings, and setup issues.
+
 ## Install Locally in Chrome Developer Mode
 
 For non-technical private pilot testers, use `PILOT-INSTALL.md`.
@@ -258,6 +270,8 @@ For non-technical private pilot testers, use `PILOT-INSTALL.md`.
 7. Open a website, then click the VaultGuard icon to analyze the current hostname.
 8. Open VaultGuard options and enable auto-scan if you want automatic badge updates.
 9. Use the onboarding page for a guided first setup.
+
+After updating local files, open `chrome://extensions` and click Reload on VaultGuard so Chrome uses the newest code.
 
 ## Edit Protected Brands
 

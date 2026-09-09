@@ -1,5 +1,15 @@
 # VaultGuard Timeline
 
+## v1.4.0 - Pilot Readiness
+
+Focus: make VaultGuard easier and safer to hand to real businesses for private pilot feedback.
+
+- Add domain feedback/reporting entry points.
+- Add clear product limitations inside the popup.
+- Add pilot email templates.
+- Add known limitations documentation for testers and business conversations.
+- Rebuild the private pilot ZIP.
+
 ## v1.3.0 - Trusted Domain and Scoring Refinement
 
 Focus: reduce false positives for legitimate organizations while keeping strong warnings for look-alike domains.

@@ -19,6 +19,8 @@ const autoScanStatusElement = document.querySelector("#auto-scan-status");
 const historyElement = document.querySelector("#history");
 const clearHistoryButton = document.querySelector("#clear-history");
 const openHistoryButton = document.querySelector("#open-history");
+const reportFeedbackButton = document.querySelector("#report-feedback");
+let currentHostname = "";
 
 function getHistoryLimit(settings) {
   const parsedLimit = Number(settings.historyLimit);
@@ -155,6 +157,7 @@ async function getActiveTabHostname() {
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     const hostname = await getActiveTabHostname();
+    currentHostname = hostname;
     const { protectedBrands, trustedDomains, history, settings } = await getProtectedBrands();
     const analysis = analyzeDomain(hostname, { protectedBrands, trustedDomains });
     autoScanStatusElement.textContent = settings.autoScanEnabled
@@ -178,4 +181,10 @@ clearHistoryButton.addEventListener("click", async () => {
 });
 openHistoryButton.addEventListener("click", () => {
   chrome.runtime.sendMessage({ type: "VAULTGUARD_OPEN_HISTORY" });
+});
+reportFeedbackButton.addEventListener("click", () => {
+  chrome.runtime.sendMessage({
+    type: "VAULTGUARD_OPEN_FEEDBACK",
+    hostname: currentHostname
+  });
 });

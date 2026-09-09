@@ -1,4 +1,4 @@
-# VaultGuard v1.0 Architecture
+# VaultGuard v1.4 Architecture
 
 ```text
 manifest.json
@@ -72,7 +72,7 @@ The options page stores detection settings only. It supports adding, removing, i
 
 ## Company Policy Presets
 
-VaultGuard v1.0 includes local presets for crypto, finance, and cloud development teams. A preset replaces the protected-brand list with a starter policy that the project owner can customize before sharing with a customer.
+VaultGuard v1.4 includes local presets for crypto, finance, and cloud development teams. A preset replaces the protected-brand list with a starter policy that the project owner can customize before sharing with a customer.
 
 Full policy exports contain:
 
@@ -84,7 +84,7 @@ Full policy exports contain:
 
 ## Content Script Scope
 
-VaultGuard v1.0 uses a content script only for the high-risk warning banner. The extension does not inspect forms, read page text, collect credentials, or modify transactions.
+VaultGuard v1.4 uses a content script only for the high-risk warning banner. The extension does not inspect forms, read page text, collect credentials, or modify transactions.
 
 The warning banner is injected by the background worker after local hostname analysis returns `High Risk` and the user has the warning-banner setting enabled.
 
@@ -109,12 +109,12 @@ Trusted domains should be used carefully and only for domains the user or compan
 
 ## Permission Choices
 
-VaultGuard v1.0 uses `activeTab` so the popup can read the current tab URL after a user action.
+VaultGuard v1.4 uses `activeTab` so the popup can read the current tab URL after a user action.
 
-VaultGuard v1.0 uses `storage` so the options page can save protected-brand, trusted-domain, history, dismissed-warning, and browsing-protection settings locally.
+VaultGuard v1.4 uses `storage` so the options page can save protected-brand, trusted-domain, history, dismissed-warning, and browsing-protection settings locally.
 
-VaultGuard v1.0 uses `tabs` so optional auto-scan can react to tab URL changes before the popup opens.
+VaultGuard v1.4 uses `tabs` so optional auto-scan can react to tab URL changes before the popup opens.
 
-VaultGuard v1.0 uses `scripting` and `http/https` host permissions so it can place a warning banner onto high-risk pages.
+VaultGuard v1.4 uses `scripting` and `http/https` host permissions so it can place a warning banner onto high-risk pages.
 
 These permissions are broader than v0.3 because automatic scanning and page warnings require them in Chrome. The privacy boundary remains: analysis is local, secrets are never requested, page contents are not analyzed, and no data is sent to a server.

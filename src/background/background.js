@@ -248,6 +248,11 @@ chrome.runtime.onMessage.addListener((message) => {
   if (message?.type === "VAULTGUARD_OPEN_HISTORY") {
     chrome.tabs.create({ url: chrome.runtime.getURL("src/history/history.html") });
   }
+
+  if (message?.type === "VAULTGUARD_OPEN_FEEDBACK") {
+    const query = message.hostname ? `?domain=${encodeURIComponent(message.hostname)}` : "";
+    chrome.tabs.create({ url: chrome.runtime.getURL(`src/feedback/feedback.html${query}`) });
+  }
 });
 
 chrome.runtime.onInstalled.addListener(({ reason }) => {

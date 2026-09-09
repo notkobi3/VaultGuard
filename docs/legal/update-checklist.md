@@ -11,6 +11,7 @@ Use this checklist before every release.
 - Did VaultGuard add a backend, cloud sync, login, or team dashboard?
 - Did VaultGuard add payment, subscription, licensing, or business customer features?
 - Did VaultGuard add third-party integrations?
+- Did VaultGuard add or change feedback, support, or reporting workflows?
 - Did marketing copy make stronger security claims?
 - Did support contact, company name, or ownership change?
 

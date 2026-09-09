@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>VaultGuard Feedback</title>
+    <link rel="stylesheet" href="feedback.css">
+  </head>
+  <body>
+    <main class="page-shell">
+      <header>
+        <p class="eyebrow">VaultGuard pilot</p>
+        <h1>Report domain feedback</h1>
+        <p>Use this form to report a missed domain, a false positive, or confusing risk language. It opens an email draft for review before anything is sent.</p>
+      </header>
+
+      <section class="notice">
+        Do not include passwords, seed phrases, private keys, recovery codes, banking details, API keys, or customer data.
+      </section>
+
+      <form id="feedbackForm" class="feedback-card">
+        <label>
+          Domain or hostname
+          <input id="domain" type="text" placeholder="Example: login.example.com">
+        </label>
+
+        <label>
+          Feedback type
+          <select id="feedbackType">
+            <option value="False positive">False positive</option>
+            <option value="Missed risky domain">Missed risky domain</option>
+            <option value="Confusing warning">Confusing warning</option>
+            <option value="Install or setup issue">Install or setup issue</option>
+            <option value="General pilot feedback">General pilot feedback</option>
+          </select>
+        </label>
+
+        <label>
+          Expected result
+          <input id="expectedResult" type="text" placeholder="Example: Should be Safe">
+        </label>
+
+        <label>
+          Actual result
+          <input id="actualResult" type="text" placeholder="Example: Showed High Risk at 65/100">
+        </label>
+
+        <label>
+          Company or team
+          <input id="company" type="text" placeholder="Optional">
+        </label>
+
+        <label>
+          Notes
+          <textarea id="notes" rows="5" placeholder="What happened? What should VaultGuard do differently?"></textarea>
+        </label>
+
+        <button type="submit">Create Email Draft</button>
+      </form>
+    </main>
+
+    <script src="feedback.js"></script>
+  </body>
+</html>

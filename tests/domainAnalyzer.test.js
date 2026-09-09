@@ -90,6 +90,25 @@ assert.equal(
   "account/billing words alone should not raise risk for normal business domains"
 );
 
+const baselineProtectionResult = analyzeDomain("metamask-wallet-support.net", {
+  protectedBrands: [
+    {
+      name: "Cloudflare",
+      aliases: ["cloudflare"],
+      domains: ["cloudflare.com"]
+    }
+  ]
+});
+assert.equal(
+  baselineProtectionResult.level,
+  "High Risk",
+  "baseline protected brands should still apply when a saved policy omits MetaMask"
+);
+assert.ok(
+  baselineProtectionResult.reasons.some((reason) => reason.includes("Domain resembles MetaMask")),
+  "baseline protected brand detection should explain the MetaMask resemblance"
+);
+
 const coUkResult = analyzeDomain("secure.paypal.co.uk.example.net", {
   protectedBrands: [
     {

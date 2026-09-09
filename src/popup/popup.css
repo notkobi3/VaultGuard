@@ -103,6 +103,16 @@ h1 {
   margin: 0 0 10px;
 }
 
+.limit-note {
+  border-left: 3px solid #a94d2a;
+  margin: 0 0 10px;
+  padding: 7px 9px;
+  color: #42526b;
+  background: #fffaf4;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
 .reasons {
   margin: 0;
   padding-left: 18px;
@@ -182,7 +192,8 @@ h1 {
 
 .popup-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  gap: 8px;
   border-top: 1px solid #d9e0ec;
   margin-top: 14px;
   padding-top: 12px;
@@ -196,6 +207,20 @@ h1 {
   background: #1f6670;
   font-weight: 700;
   cursor: pointer;
+}
+
+.secondary-button {
+  border: 1px solid #bfd0d8;
+  border-radius: 4px;
+  padding: 8px 10px;
+  color: #102033;
+  background: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.secondary-button:hover {
+  background: #eef4f2;
 }
 
 .settings-button:hover {
@@ -253,5 +278,21 @@ h1 {
   .history-score {
     color: #e8f0f2;
     background: #263b46;
+  }
+
+  .limit-note {
+    border-left-color: #d69a6a;
+    color: #d8e4e8;
+    background: #2c2118;
+  }
+
+  .secondary-button {
+    border-color: #35525f;
+    color: #e8f0f2;
+    background: #172832;
+  }
+
+  .secondary-button:hover {
+    background: #223845;
   }
 }

@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.4.0 - Pilot Readiness
+
+- Added a `Report Feedback` button in the popup.
+- Added a feedback page that creates an email draft for missed domains, false positives, confusing warnings, and setup issues.
+- Added a popup limitation note explaining that VaultGuard checks domain patterns only.
+- Added private pilot email templates.
+- Added known pilot limitations documentation.
+- Rebuilt the private pilot ZIP for v1.4.0.
+
+## 1.3.1 - Baseline Protection Fix
+
+- Kept core baseline protected brands active even when a saved policy or preset omits them.
+- Updated presets and policy imports so baseline protections stay visible in settings.
+- Added a regression test for `metamask-wallet-support.net` when a custom policy is active.
+
 ## 1.3.0 - Trusted Domain and Scoring Refinement
 
 - Added `Trusted` as a distinct risk level for user-approved domains.

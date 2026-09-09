@@ -127,6 +127,28 @@ function validateBrands(value) {
   return value.map(cleanBrand);
 }
 
+function mergeBrandLists(...brandLists) {
+  const mergedBrands = new Map();
+
+  brandLists.flat().forEach((brand) => {
+    const cleanedBrand = cleanBrand(brand);
+    const key = cleanedBrand.name.toLowerCase();
+    const existingBrand = mergedBrands.get(key) || {
+      name: cleanedBrand.name,
+      aliases: [],
+      domains: []
+    };
+
+    existingBrand.aliases.push(...cleanedBrand.aliases);
+    existingBrand.domains.push(...cleanedBrand.domains);
+    existingBrand.aliases = [...new Set(existingBrand.aliases)];
+    existingBrand.domains = [...new Set(existingBrand.domains)];
+    mergedBrands.set(key, existingBrand);
+  });
+
+  return [...mergedBrands.values()];
+}
+
 function validateTrustedDomains(value) {
   if (!Array.isArray(value)) {
     throw new Error("Trusted domains must be an array.");
@@ -231,7 +253,7 @@ async function savePolicy(message) {
 
 async function loadOptions() {
   const saved = await chrome.storage.local.get([BRAND_KEY, SETTINGS_KEY, TRUSTED_KEY]);
-  brands = validateBrands(saved[BRAND_KEY] || PROTECTED_BRANDS);
+  brands = mergeBrandLists(PROTECTED_BRANDS, saved[BRAND_KEY] || []);
   trustedDomains = validateTrustedDomains(saved[TRUSTED_KEY] || []);
   settings = {
     ...DEFAULT_SETTINGS,
@@ -261,7 +283,7 @@ function importSettings(parsed) {
     ...DEFAULT_SETTINGS,
     ...(parsed.settings || {})
   };
-  brands = validateBrands(parsed.protectedBrands || parsed.brands || []);
+  brands = mergeBrandLists(PROTECTED_BRANDS, parsed.protectedBrands || parsed.brands || []);
   trustedDomains = validateTrustedDomains(parsed.trustedDomains || []);
 }
 
@@ -277,7 +299,7 @@ function importBrandFile(file) {
         renderBrands();
         renderTrustedDomains();
         renderSettings();
-        await savePolicy("VaultGuard policy imported locally.");
+        await savePolicy("VaultGuard policy imported locally with baseline protections included.");
       } else {
         brands = validateBrands(parsed);
         renderBrands();
@@ -301,11 +323,11 @@ async function applyPreset(presetName) {
     return;
   }
 
-  brands = validateBrands(preset.brands);
+  brands = mergeBrandLists(PROTECTED_BRANDS, preset.brands);
   trustedDomains = validateTrustedDomains(preset.trustedDomains);
   renderBrands();
   renderTrustedDomains();
-  await savePolicy(`${preset.label} preset loaded. Review and customize domains before sharing with a customer.`);
+  await savePolicy(`${preset.label} preset loaded with baseline protections included. Review and customize domains before sharing with a customer.`);
 }
 
 brandForm.addEventListener("submit", async (event) => {

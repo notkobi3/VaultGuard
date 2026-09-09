@@ -11,7 +11,7 @@ Use Google Chrome on a desktop or laptop.
 The pilot ZIP should be named something like:
 
 ```text
-vaultguard-pilot-1.3.0.zip
+vaultguard-pilot-1.4.0.zip
 ```
 
 ## Install VaultGuard
@@ -24,6 +24,18 @@ vaultguard-pilot-1.3.0.zip
 6. Click `Load unpacked`.
 7. Select the extracted VaultGuard folder that contains `manifest.json`.
 8. Pin VaultGuard to the Chrome toolbar.
+
+If VaultGuard was already installed, click `Reload` on the VaultGuard card in `chrome://extensions` after replacing the files.
+
+## Uninstall VaultGuard
+
+1. Open Chrome.
+2. Go to `chrome://extensions`.
+3. Find `VaultGuard`.
+4. Click `Remove`.
+5. Confirm removal when Chrome asks.
+
+If your team extracted the pilot ZIP to a folder on the computer, you can also delete that extracted folder after removing the extension from Chrome.
 
 ## First Setup
 
@@ -72,6 +84,7 @@ Please check:
 - Did fake-looking domains become Needs Review or High Risk?
 - Was the warning banner clear?
 - Was the history page useful?
+- Was the Report Feedback button easy to use?
 - Did anything feel confusing or too technical?
 
 ## Pilot Feedback Questions
@@ -104,4 +117,4 @@ VaultGuard should be used with:
 
 Pilot contact: Kobi / Layer Zero Security
 
-Add your preferred support email before sending this guide to a business.
+Feedback email: layerzerosecurity@gmail.com
